@@ -7,7 +7,10 @@ function Home() {
       <nav>
         <ul>
           <li>
-            <Link to="/window">Window Management</Link>
+            <Link to="/window">窗口管理</Link>
+          </li>
+          <li>
+            <Link to="/dialog">对话框管理</Link>
           </li>
         </ul>
       </nav>
