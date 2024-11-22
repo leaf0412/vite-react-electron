@@ -2,6 +2,10 @@ import { app, BrowserWindow } from 'electron';
 import WindowManager from './handlers/window-manager';
 import { registerProtocol, unProtocol } from './handlers/create-protocol';
 import { isMac } from './config/constant';
+import {
+  initDialogIpcHandlers,
+  destroyDialogIpcHandlers,
+} from './handlers/dialog-manager';
 
 let winManager: WindowManager | null = null;
 let win: BrowserWindow | null = null;
@@ -11,6 +15,7 @@ async function initApp() {
 
   winManager = new WindowManager();
   winManager.initIpcHandlers();
+  initDialogIpcHandlers();
 
   win = winManager.createWindow({
     show: false,
@@ -38,6 +43,7 @@ if (!gotTheLock) {
     win = null;
     unProtocol();
     winManager?.destroyIpcHandlers();
+    destroyDialogIpcHandlers();
     if (!isMac) {
       app.quit();
     }

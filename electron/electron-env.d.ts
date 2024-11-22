@@ -30,6 +30,14 @@ type WindowOptions = BrowserWindowConstructorOptions & {
   maximize?: boolean;
 };
 
+interface DialogOptions {
+  title?: string
+  message?: string
+  type?: 'none' | 'info' | 'error' | 'question' | 'warning'
+  buttons?: string[]
+  defaultId?: number
+}
+
 // Used in Renderer process, expose in `preload.ts`
 interface Window {
   ipcRenderer: import('electron').IpcRenderer & {
@@ -47,5 +55,14 @@ interface Window {
     reloadWindow(winId?: number): Promise<void>
     getWindowBounds(): Promise<{ x: number; y: number; width: number; height: number }>
     getDisplayInfo(): Promise<import('electron').Display>
+
+    // Dialog operations
+    openDialog(options?: OpenDialogOptions): Promise<OpenDialogReturnValue>
+    saveDialog(options?: SaveDialogOptions): Promise<SaveDialogReturnValue>
+    showMessage(options?: DialogOptions): Promise<number>
+    showError(options?: DialogOptions): Promise<MessageBoxReturnValue>
+    showInfo(options?: DialogOptions): Promise<MessageBoxReturnValue>
+    showWarning(options?: DialogOptions): Promise<MessageBoxReturnValue>
+    showQuestion(options?: DialogOptions): Promise<MessageBoxReturnValue>
   }
 }

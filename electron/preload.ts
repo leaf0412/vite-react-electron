@@ -1,4 +1,9 @@
-import { ipcRenderer, contextBridge } from 'electron';
+import {
+  ipcRenderer,
+  contextBridge,
+  OpenDialogOptions,
+  SaveDialogOptions,
+} from 'electron';
 import { Events } from '@electron/config/ipc-events';
 
 // --------- Expose some API to the Renderer process ---------
@@ -44,4 +49,20 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
     ipcRenderer.invoke(Events.WINDOW_RELOAD, winId),
   getWindowBounds: () => ipcRenderer.invoke(Events.WINDOW_GET_BOUNDS),
   getDisplayInfo: () => ipcRenderer.invoke(Events.SCREEN_GET_DISPLAY_INFO),
+
+  // Dialog operations
+  openDialog: (options: OpenDialogOptions) =>
+    ipcRenderer.invoke(Events.DIALOG_OPEN, options),
+  saveDialog: (options: SaveDialogOptions) =>
+    ipcRenderer.invoke(Events.DIALOG_SAVE, options),
+  showMessage: (options: DialogOptions) =>
+    ipcRenderer.invoke(Events.DIALOG_MESSAGE, options),
+  showError: (options: DialogOptions) =>
+    ipcRenderer.invoke(Events.DIALOG_ERROR, options),
+  showInfo: (options: DialogOptions) =>
+    ipcRenderer.invoke(Events.DIALOG_INFO, options),
+  showWarning: (options: DialogOptions) =>
+    ipcRenderer.invoke(Events.DIALOG_WARNING, options),
+  showQuestion: (options: DialogOptions) =>
+    ipcRenderer.invoke(Events.DIALOG_QUESTION, options),
 });
