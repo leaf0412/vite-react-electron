@@ -1,10 +1,4 @@
-import {
-  app,
-  BrowserWindow,
-  BrowserWindowConstructorOptions,
-  ipcMain,
-  screen,
-} from 'electron';
+import { app, BrowserWindow, ipcMain, screen } from 'electron';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import createProtocol, { defaultScheme } from './create-protocol';
@@ -13,33 +7,11 @@ import {
   VITE_DEV_SERVER_URL,
   VITE_PUBLIC,
 } from '@electron/config/constant';
+import { WindowEvents } from '@electron/config/ipc-events';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const Events = {
-  WINDOW_NEW: 'WINDOW_NEW',
-  WINDOW_CLOSED: 'WINDOW_CLOSED',
-  WINDOW_HIDE: 'WINDOW_HIDE',
-  WINDOW_SHOW: 'WINDOW_SHOW',
-  WINDOW_FOCUS: 'WINDOW_FOCUS',
-  WINDOW_ID: 'WINDOW_ID',
-  WINDOW_MINI: 'WINDOW_MINI',
-  WINDOW_MAX: 'WINDOW_MAX',
-  WINDOW_MAX_MIN_SIZE: 'WINDOW_MAX_MIN_SIZE',
-  WINDOW_RESTORE: 'WINDOW_RESTORE',
-  WINDOW_RELOAD: 'WINDOW_RELOAD',
-  WINDOW_GET_BOUNDS: 'WINDOW_GET_BOUNDS',
-  SCREEN_GET_DISPLAY_INFO: 'SCREEN_GET_DISPLAY_INFO',
-} as const;
-
-type WindowOptions = BrowserWindowConstructorOptions & {
-  id?: number;
-  isMainWin?: boolean;
-  route?: string;
-  isMultiWindow?: boolean;
-  parentId?: number;
-  maximize?: boolean;
-};
+const Events = WindowEvents;
 
 class WindowManager {
   rendererDirectoryName = RENDERER_DIRECTORY_NAME;
@@ -243,7 +215,7 @@ class WindowManager {
   destroyIpcHandlers() {
     Object.keys(Events).forEach(key => {
       ipcMain.removeHandler(Events[key as keyof typeof Events]);
-    })
+    });
   }
 }
 

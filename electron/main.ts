@@ -10,11 +10,14 @@ async function initApp() {
   await app.whenReady();
 
   winManager = new WindowManager();
-
   winManager.initIpcHandlers();
 
   win = winManager.createWindow({
     show: false,
+    width: 768,
+    height: 1024,
+    minHeight: 768,
+    minWidth: 1024,
   });
 
   win.on('ready-to-show', () => {
