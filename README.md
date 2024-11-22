@@ -1,30 +1,84 @@
-# React + TypeScript + Vite
+# Vite React Electron
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+一个使用 Vite + React + Electron 构建的现代桌面应用程序模板。
 
-Currently, two official plugins are available:
+## 技术栈
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **前端框架**: React 18
+- **构建工具**: Vite 5
+- **桌面框架**: Electron 30
+- **开发语言**: TypeScript
+- **代码规范**: ESLint
+- **Git 规范**: Commitlint
+- **包管理器**: npm
 
-## Expanding the ESLint configuration
+## 特性
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- ⚡️ 基于 Vite 的快速热重载开发体验
+- 🎯 TypeScript 支持，提供类型安全
+- 📦 开箱即用的 Electron 配置
+- 🔍 ESLint 代码检查
+- 💻 现代化的开发工具链
+- 🚀 使用 electron-builder 进行应用打包
+- 📝 规范的 Git 提交信息格式
 
-- Configure the top-level `parserOptions` property like this:
+## 项目结构
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+```
+├── electron/               # Electron 主进程相关代码
+│   ├── config/            # 配置文件
+│   ├── handlers/          # 事件处理程序
+│   ├── main.ts           # 主进程入口文件
+│   └── preload.ts        # 预加载脚本
+├── src/                   # 渲染进程源代码
+│   ├── assets/           # 静态资源
+│   ├── App.tsx           # 主应用组件
+│   └── main.tsx          # 渲染进程入口文件
+├── public/                # 静态资源目录
+└── dist-electron/         # 编译后的 Electron 代码
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## 开发环境设置
+
+### 前置要求
+
+- Node.js 18+ 
+- npm 9+
+
+### 安装依赖
+
+```bash
+npm install
+```
+
+### 开发模式
+
+```bash
+npm run dev
+```
+
+### 构建应用
+
+```bash
+npm run build
+```
+
+## 脚本命令
+
+- `npm run dev` - 启动开发服务器
+- `npm run build` - 构建生产版本
+- `npm run lint` - 运行代码检查
+- `npm run preview` - 预览生产构建
+
+## Git 提交规范
+
+项目使用 Commitlint 来规范 Git 提交信息，支持以下类型：
+
+- feat: 新功能
+- fix: 修复问题
+- docs: 文档修改
+- style: 代码格式修改
+- refactor: 代码重构
+- perf: 性能优化
+- test: 测试相关
+- chore: 构建过程或辅助工具的变动
