@@ -6,6 +6,7 @@ import {
   initDialogIpcHandlers,
   destroyDialogIpcHandlers,
 } from './handlers/dialog-manager';
+import { initFileManagerIpcHandlers, destroyFileManagerIpcHandlers } from './handlers/file-manager';
 
 let winManager: WindowManager | null = null;
 let win: BrowserWindow | null = null;
@@ -16,6 +17,7 @@ async function initApp() {
   winManager = new WindowManager();
   winManager.initIpcHandlers();
   initDialogIpcHandlers();
+  initFileManagerIpcHandlers();
 
   win = winManager.createWindow({
     show: false,
@@ -44,6 +46,7 @@ if (!gotTheLock) {
     unProtocol();
     winManager?.destroyIpcHandlers();
     destroyDialogIpcHandlers();
+    destroyFileManagerIpcHandlers();
     if (!isMac) {
       app.quit();
     }
