@@ -12,6 +12,9 @@ function Home() {
           <li>
             <Link to="/dialog">对话框管理</Link>
           </li>
+          <li>
+            <Link to="/file-manager">文件管理器</Link>
+          </li>
         </ul>
       </nav>
     </div>

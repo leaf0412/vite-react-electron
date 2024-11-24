@@ -1,6 +1,7 @@
 import Home from '@/pages/home';
 import Dialog from '@/pages/dialog';
 import Window from '@/pages/window';
+import FileManager from '@/pages/file-manager';
 
 const router = [
   {
@@ -14,6 +15,10 @@ const router = [
   {
     path: '/window',
     Component: Window,
+  },
+  {
+    path: '/file-manager',
+    Component: FileManager,
   },
 ];
 
