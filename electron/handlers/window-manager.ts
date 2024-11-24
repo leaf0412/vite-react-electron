@@ -36,6 +36,9 @@ class WindowManager {
       icon: join(VITE_PUBLIC, 'icon.png'),
       webPreferences: {
         preload: join(__dirname, 'preload.mjs'),
+        webSecurity: false,
+        contextIsolation: true,
+        nodeIntegration: true
       },
     };
   }

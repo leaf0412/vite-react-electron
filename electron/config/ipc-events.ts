@@ -24,12 +24,26 @@ export const DialogEvents = {
   DIALOG_QUESTION: 'DIALOG_QUESTION',
 } as const;
 
+export const FileManagerEvents = {
+  FILE_READ_DIRECTORY: 'FILE_READ_DIRECTORY',
+  FILE_CREATE_DIRECTORY: 'FILE_CREATE_DIRECTORY',
+  FILE_CREATE_FILE: 'FILE_CREATE_FILE',
+  FILE_READ: 'FILE_READ',
+  FILE_COPY: 'FILE_COPY',
+  FILE_MOVE: 'FILE_MOVE',
+  FILE_DELETE: 'FILE_DELETE',
+  FILE_GET_INFO: 'FILE_GET_INFO',
+  FILE_EXISTS: 'FILE_EXISTS',
+} as const;
+
 export type WindowEventKeys = keyof typeof WindowEvents;
 export type DialogEventKeys = keyof typeof DialogEvents;
+export type FileManagerEventKeys = keyof typeof FileManagerEvents;
 
 export const Events = {
   ...WindowEvents,
   ...DialogEvents,
+  ...FileManagerEvents,
 } as const;
 
 export type EventKeys = keyof typeof Events;
