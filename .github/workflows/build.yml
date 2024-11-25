@@ -62,37 +62,35 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Delete old test release
-        uses: dev-drprasad/delete-tag-and-release@v1.0
-        with:
-          tag_name: test-release-pr-${{ github.event.pull_request.number }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
+      - name: Get Version
+        id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
       
       - name: Download artifacts
         uses: actions/download-artifact@v4
-        
+        with:
+          pattern: 'build-*'
+          path: artifacts
+          merge-multiple: true
+      
       - name: List artifacts
-        run: ls -R build-*
+        run: ls -R artifacts
         
-      - name: Create Test Release
+      - name: Prepare Release Files
+        run: |
+          mkdir -p release-files
+          cp artifacts/build-*/${{ steps.version.outputs.version }}/*.{exe,dmg,AppImage,blockmap,yml} release-files/ || true
+        shell: bash
+      
+      - name: Create Release
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: |
-            build-*/release/**/*.exe
-            build-*/release/**/*.dmg
-            build-*/release/**/*.AppImage
-          tag_name: test-release-pr-${{ github.event.pull_request.number }}
-          name: Test Release for PR #${{ github.event.pull_request.number }}
-          body: |
-            This is a test release created from PR #${{ github.event.pull_request.number }}
-            Branch: ${{ github.head_ref }}
-            Commit: ${{ github.sha }}
-          prerelease: true
-          draft: false
+          files: release-files/*
+          generate_release_notes: true
           
   release:
     needs: build
