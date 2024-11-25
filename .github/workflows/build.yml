@@ -48,9 +48,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-${{ matrix.os }}
-          path: |
-            dist
-            release/build
+          path: release/
+          retention-days: 1
+          if-no-files-found: error
 
   release:
     needs: build
@@ -72,7 +72,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
-            build-*/release/build/*.exe
-            build-*/release/build/*.dmg
-            build-*/release/build/*.AppImage
-            build-*/release/build/*.snap
+            build-*/release/**/*.exe
+            build-*/release/**/*.dmg
+            build-*/release/**/*.AppImage
