@@ -29,7 +29,7 @@ jobs:
           
       - name: Install dependencies
         run: npm ci
-
+        
       - name: Lint
         run: npm run lint
         continue-on-error: true
@@ -52,6 +52,41 @@ jobs:
           retention-days: 1
           if-no-files-found: error
 
+  test-release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        
+      - name: List artifacts
+        run: ls -R build-*
+        
+      - name: Create Test Release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: |
+            build-*/release/**/*.exe
+            build-*/release/**/*.dmg
+            build-*/release/**/*.AppImage
+          tag_name: test-release-pr-${{ github.event.pull_request.number }}
+          name: Test Release for PR #${{ github.event.pull_request.number }}
+          body: |
+            This is a test release created from PR #${{ github.event.pull_request.number }}
+            Branch: ${{ github.head_ref }}
+            Commit: ${{ github.sha }}
+          prerelease: true
+          draft: false
+          
   release:
     needs: build
     runs-on: ubuntu-latest
