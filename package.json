@@ -10,7 +10,12 @@
     "preview": "vite preview",
     "prepare": "npx simple-git-hooks",
     "commitlint": "commitlint --edit",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "release": "release-it",
+    "release:dry": "release-it --dry-run",
+    "release:minor": "release-it minor",
+    "release:patch": "release-it patch",
+    "release:major": "release-it major"
   },
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged",
@@ -30,6 +35,7 @@
     "@ant-design/icons": "^5.5.1",
     "@commitlint/cli": "^19.6.0",
     "@commitlint/config-conventional": "^19.6.0",
+    "@release-it/conventional-changelog": "^9.0.3",
     "@types/react": "^18.2.64",
     "@types/react-dom": "^18.2.21",
     "@typescript-eslint/eslint-plugin": "^7.1.1",
@@ -42,6 +48,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "lint-staged": "^15.2.10",
+    "release-it": "^17.10.0",
     "simple-git-hooks": "^2.11.1",
     "typescript": "~5.5.0",
     "vite": "^5.1.6",
