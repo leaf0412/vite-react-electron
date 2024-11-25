@@ -2,6 +2,8 @@
 
 一个使用 Vite + React + Electron 构建的现代桌面应用程序模板。
 
+仓库地址：https://github.com/leaf0412/vite-react-electron
+
 ## 技术栈
 
 - **前端框架**: React 18
@@ -22,6 +24,41 @@
 - 🚀 使用 electron-builder 进行应用打包
 - 📝 规范的 Git 提交信息格式
 
+## 快速开始
+
+### 创建项目
+
+```bash
+# 使用 npm
+npm create electron-vite
+
+# 选择模板
+✔ Project name: vite-react-electron
+✔ Select a framework: › React
+✔ Add TypeScript?  Yes
+✔ Add Electron Support?  Yes
+
+# 进入项目目录
+cd vite-react-electron
+
+# 安装依赖
+npm install
+```
+
+### 开发
+
+```bash
+# 启动开发服务器
+npm run dev
+```
+
+### 构建
+
+```bash
+# 构建应用
+npm run build
+```
+
 ## 项目结构
 
 ```
@@ -37,6 +74,33 @@
 ├── public/                # 静态资源目录
 └── dist-electron/         # 编译后的 Electron 代码
 ```
+
+## 配置说明
+
+### Vite 配置
+
+`vite.config.ts` 文件包含了 Vite 的配置，包括插件配置和构建选项：
+
+- vite-plugin-electron：处理 Electron 主进程代码
+- vite-plugin-electron-renderer：处理渲染进程代码
+- @vitejs/plugin-react：React 支持
+
+### Electron 配置
+
+`electron-builder.json5` 包含了应用打包配置：
+
+- 应用图标
+- 构建目标平台
+- 安装程序选项
+- 自动更新配置
+
+## IPC 通信
+
+主进程和渲染进程之间的通信通过 IPC (进程间通信) 实现：
+
+1. 主进程处理程序 (`electron/handlers/`)
+2. 预加载脚本 (`electron/preload.ts`)
+3. 渲染进程 API 调用
 
 ## 开发环境设置
 
