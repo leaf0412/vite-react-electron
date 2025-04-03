@@ -1,65 +1,88 @@
-import { protocol } from 'electron';
+import { protocol, app } from 'electron';
 import path from 'node:path';
 import fs from 'node:fs';
 import { URL } from 'node:url';
-import { Readable } from 'stream';
-import { __dirname } from '@electron/config/constant';
 
 export const defaultScheme = 'myapp';
 
-export const registerProtocol = (
-  scheme = defaultScheme,
-  customProtocol = protocol
-) => {
-  customProtocol.registerSchemesAsPrivileged([
-    { scheme, privileges: { secure: true, standard: true, corsEnabled: true } },
+interface ProtocolOptions {
+  scheme?: string;
+  directory?: {
+    isSameDirectory: boolean;
+    name: string;
+  };
+}
+
+export const registerProtocol = (scheme = defaultScheme): void => {
+  protocol.registerSchemesAsPrivileged([
+    {
+      scheme,
+      privileges: {
+        secure: true,
+        standard: true,
+        corsEnabled: true,
+        supportFetchAPI: true,
+      },
+    },
   ]);
 };
 
-const createProtocol = (scheme = defaultScheme, customProtocol = protocol) => {
-  customProtocol.handle(scheme, async request => {
-    const url = new URL(request.url);
-    const pathName = decodeURI(url.pathname);
-    const filePath = path.resolve(path.join(__dirname, '../', pathName));
+const normalizePath = (
+  urlPath: string,
+  directory: { isSameDirectory: boolean; name: string }
+): string => {
+  const decodedPath = decodeURI(urlPath)
+    .replace(/^\//, '')
+    .replace(/\/$/, '');
 
-    try {
-      await fs.promises.access(filePath, fs.constants.R_OK);
-    } catch (err) {
-      console.error(`Failed to read ${pathName} on ${scheme} protocol`, err);
-      return new Response('Not Found', { status: 404 });
+  if (directory.isSameDirectory) {
+    if (decodedPath.startsWith(directory.name)) {
+      if (decodedPath === directory.name) {
+        const result = path.join(decodedPath, 'index.html');
+        return result;
+      }
+      return decodedPath;
     }
+    if (decodedPath === '') {
+      const result = path.join(directory.name, 'index.html');
+      return result;
+    }
+    const result = path.join(directory.name, decodedPath);
+    return result;
+  }
 
-    const extension = path.extname(pathName).toLowerCase();
-    const mimeType =
-      (
-        {
-          '.js': 'text/javascript',
-          '.html': 'text/html',
-          '.css': 'text/css',
-          '.svg': 'image/svg+xml',
-          '.svgz': 'image/svg+xml',
-          '.json': 'application/json',
-          '.wasm': 'application/wasm',
-        } as const
-      )[extension] || '';
+  return decodedPath;
+};
 
-    const fileStream = fs.createReadStream(filePath);
-    const webReadableStream = Readable.toWeb(
-      fileStream
-    ) as ReadableStream<Uint8Array>;
+export const createProtocol = ({
+  scheme = defaultScheme,
+  directory = {
+    isSameDirectory: false,
+    name: 'dist',
+  },
+}: ProtocolOptions): void => {
+  protocol.registerFileProtocol(scheme, async (request, callback) => {
+    try {
+      const requestUrl = new URL(request.url);
+      const urlPath = normalizePath(requestUrl.pathname, directory);
+      let basePath;
+      if (process.env.NODE_ENV === 'development') {
+        basePath = process.cwd();
+      } else {
+        basePath = app.getAppPath();
+      }
+      const filePath = path.resolve(basePath, urlPath);
 
-    return new Response(webReadableStream, {
-      status: 200,
-      headers: { 'content-type': mimeType },
-    });
+      await fs.promises.access(filePath, fs.constants.R_OK);
+      callback(filePath);
+    } catch (error) {
+      callback({ error: -2 });
+    }
   });
 };
 
-export const unProtocol = (
-  scheme = defaultScheme,
-  customProtocol = protocol
-) => {
-  customProtocol.unhandle(scheme);
+export const unregisterProtocol = (scheme = defaultScheme): void => {
+  protocol.unregisterProtocol(scheme);
 };
 
 export default createProtocol;

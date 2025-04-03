@@ -22,23 +22,29 @@ class WindowManager {
     this.windowOptionsConfig = this.windowOptions();
     this.rendererDirectoryName =
       props.rendererDirectoryName || this.rendererDirectoryName;
-    createProtocol();
+    createProtocol({
+      directory: {
+        isSameDirectory: true,
+        name: this.rendererDirectoryName,
+      },
+    });
   }
 
   windowOptions(width = 500, height = 800) {
     return {
       width,
       height,
+      isDevTools: false,
       resizable: true,
       minimizable: true,
       maximizable: true,
       show: false,
       icon: join(VITE_PUBLIC, 'icon.png'),
       webPreferences: {
-        preload: join(__dirname, 'preload.mjs'),
+        preload: join(__dirname, 'preload.js'),
         webSecurity: false,
         contextIsolation: true,
-        nodeIntegration: true
+        nodeIntegration: true,
       },
     };
   }
@@ -92,8 +98,11 @@ class WindowManager {
       winURL = args.route
         ? VITE_DEV_SERVER_URL + args.route
         : VITE_DEV_SERVER_URL;
+      if (args.isDevTools) {
+        win.webContents.openDevTools();
+      }
     } else {
-      const filePath = `./${this.rendererDirectoryName}/index.html`;
+      const filePath = `./${this.rendererDirectoryName}`;
       winURL = args.route
         ? `${defaultScheme}://${filePath}${args.route}`
         : `${defaultScheme}://${filePath}`;
