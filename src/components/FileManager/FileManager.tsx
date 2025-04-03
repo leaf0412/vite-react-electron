@@ -202,13 +202,11 @@ const FileManager: React.FC<FileManagerProps> = ({
   const handleDelete = async (file: FileItem) => {
     try {
       const result = await window.ipcRenderer.showQuestion({
-        type: 'warning',
         title: '确认删除',
         message: `确定要删除 ${file.name} 吗？`,
         buttons: ['是', '否'],
         defaultId: 1,
       });
-      console.log(result, 'result');
 
       if (result.response === 0) {
         await window.ipcRenderer.delete(file.path);
@@ -295,7 +293,6 @@ const FileManager: React.FC<FileManagerProps> = ({
 
       if (exists) {
         const result = await window.ipcRenderer.showQuestion({
-          type: 'warning',
           title: '文件已存在',
           message: '要如何处理已存在的文件？',
           buttons: ['替换', '创建副本', '取消'],
