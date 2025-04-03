@@ -18,7 +18,6 @@ const FileManagerPage: React.FC = () => {
 
       if (!result.canceled && result.filePaths.length > 0) {
         const selectedPath = result.filePaths[0];
-        console.log('Selected path:', selectedPath);
         setSelectedPath(selectedPath);
       }
     } catch (error) {
