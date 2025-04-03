@@ -6,25 +6,31 @@ import {
 } from 'electron';
 import { Events } from '@electron/config/ipc-events';
 
-interface DialogOptions {
-  title?: string;
-  message: string;
-  detail?: string;
-  buttons?: string[];
-}
-
-interface WindowOptions {
-  width?: number;
-  height?: number;
-  show?: boolean;
-  center?: boolean;
-}
+const handleEvent = (
+  status: ListenerType,
+  channel: string,
+  callback: (event: Electron.IpcRendererEvent, ...args: unknown[]) => void
+) => {
+  const wrappedCallback = (
+    event: Electron.IpcRendererEvent,
+    ...args: unknown[]
+  ) => callback(event, ...args);
+  if (status === 'once') {
+    return ipcRenderer.once(channel, wrappedCallback);
+  }
+  if (status === 'on') {
+    return ipcRenderer.on(channel, wrappedCallback);
+  }
+  if (status === 'off') {
+    return ipcRenderer.off(channel, wrappedCallback);
+  }
+};
 
 // --------- Expose some API to the Renderer process ---------
-contextBridge.exposeInMainWorld('ipcRenderer', {
+const api = {
   // System information
   platform: process.platform,
-  homedir: process.env.HOME || process.env.USERPROFILE,
+  homedir: process.env.HOME || process.env.USERPROFILE || '',
 
   on(...args: Parameters<typeof ipcRenderer.on>) {
     const [channel, listener] = args;
@@ -50,14 +56,11 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
     ipcRenderer.invoke(Events.WINDOW_NEW, options),
   closeWindow: (winId?: number) =>
     ipcRenderer.invoke(Events.WINDOW_CLOSED, winId),
-  hideWindow: (winId?: number) => 
-    ipcRenderer.invoke(Events.WINDOW_HIDE, winId),
-  showWindow: (winId?: number) => 
-    ipcRenderer.invoke(Events.WINDOW_SHOW, winId),
+  hideWindow: (winId?: number) => ipcRenderer.invoke(Events.WINDOW_HIDE, winId),
+  showWindow: (winId?: number) => ipcRenderer.invoke(Events.WINDOW_SHOW, winId),
   focusWindow: (winId?: number) =>
     ipcRenderer.invoke(Events.WINDOW_FOCUS, winId),
-  getWindowId: () => 
-    ipcRenderer.invoke(Events.WINDOW_ID),
+  getWindowId: () => ipcRenderer.invoke(Events.WINDOW_ID),
   minimizeWindow: (winId?: number) =>
     ipcRenderer.invoke(Events.WINDOW_MINI, winId),
   maximizeWindow: (winId?: number) =>
@@ -68,10 +71,8 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
     ipcRenderer.invoke(Events.WINDOW_RESTORE, winId),
   reloadWindow: (winId?: number) =>
     ipcRenderer.invoke(Events.WINDOW_RELOAD, winId),
-  getWindowBounds: () => 
-    ipcRenderer.invoke(Events.WINDOW_GET_BOUNDS),
-  getDisplayInfo: () => 
-    ipcRenderer.invoke(Events.SCREEN_GET_DISPLAY_INFO),
+  getWindowBounds: () => ipcRenderer.invoke(Events.WINDOW_GET_BOUNDS),
+  getDisplayInfo: () => ipcRenderer.invoke(Events.SCREEN_GET_DISPLAY_INFO),
 
   // Dialog operations
   openDialog: (options: OpenDialogOptions) =>
@@ -80,32 +81,48 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
     ipcRenderer.invoke(Events.DIALOG_SAVE, options),
   showMessage: (options: DialogOptions) =>
     ipcRenderer.invoke(Events.DIALOG_MESSAGE, options),
-  showError: (options: DialogOptions) =>
+  showError: (options: Omit<DialogOptions, 'type'>) =>
     ipcRenderer.invoke(Events.DIALOG_ERROR, options),
-  showInfo: (options: DialogOptions) =>
+  showInfo: (options: Omit<DialogOptions, 'type'>) =>
     ipcRenderer.invoke(Events.DIALOG_INFO, options),
-  showWarning: (options: DialogOptions) =>
+  showWarning: (options: Omit<DialogOptions, 'type'>) =>
     ipcRenderer.invoke(Events.DIALOG_WARNING, options),
-  showQuestion: (options: DialogOptions) =>
+  showQuestion: (options: Omit<DialogOptions, 'type'>) =>
     ipcRenderer.invoke(Events.DIALOG_QUESTION, options),
 
   // File Manager operations
-  readDirectory: (dirPath: string) => 
+  readDirectory: (dirPath: string) =>
     ipcRenderer.invoke(Events.FILE_READ_DIRECTORY, dirPath),
-  createDirectory: (dirPath: string) => 
+  createDirectory: (dirPath: string) =>
     ipcRenderer.invoke(Events.FILE_CREATE_DIRECTORY, dirPath),
-  createFile: (filePath: string, content?: string) => 
+  createFile: (filePath: string, content?: string) =>
     ipcRenderer.invoke(Events.FILE_CREATE_FILE, filePath, content),
-  readFile: (filePath: string, encoding?: BufferEncoding) => 
+  readFile: (filePath: string, encoding?: BufferEncoding) =>
     ipcRenderer.invoke(Events.FILE_READ, filePath, encoding),
-  copy: (sourcePath: string, destinationPath: string) => 
+  copy: (sourcePath: string, destinationPath: string) =>
     ipcRenderer.invoke(Events.FILE_COPY, sourcePath, destinationPath),
-  move: (sourcePath: string, destinationPath: string) => 
+  move: (sourcePath: string, destinationPath: string) =>
     ipcRenderer.invoke(Events.FILE_MOVE, sourcePath, destinationPath),
-  delete: (targetPath: string) => 
+  delete: (targetPath: string) =>
     ipcRenderer.invoke(Events.FILE_DELETE, targetPath),
-  getInfo: (targetPath: string) => 
+  getInfo: (targetPath: string) =>
     ipcRenderer.invoke(Events.FILE_GET_INFO, targetPath),
-  exists: (targetPath: string) => 
+  exists: (targetPath: string) =>
     ipcRenderer.invoke(Events.FILE_EXISTS, targetPath),
-});
+
+  startupLoadingProgress: (
+    status: ListenerType,
+    callback: IpcRendererEventCallback
+  ) => handleEvent(status, Events.STARTUP_LOADING_PROGRESS, callback),
+  mainWindowReady: () => ipcRenderer.invoke(Events.MAIN_WINDOW_READY),
+  getLanguage: () => ipcRenderer.invoke(Events.GET_LANGUAGE),
+  checkForUpdates: () => ipcRenderer.invoke(Events.CHECK_FOR_UPDATES),
+  downloadUpdate: () => ipcRenderer.invoke(Events.DOWNLOAD_UPDATE),
+  installUpdate: () => ipcRenderer.invoke(Events.INSTALL_UPDATE),
+  upgradeProgress: (
+    status: ListenerType,
+    callback: IpcRendererEventCallback
+  ) => handleEvent(status, Events.UPGRADE_PROGRESS, callback),
+};
+
+contextBridge.exposeInMainWorld('ipcRenderer', api);

@@ -36,14 +36,29 @@ export const FileManagerEvents = {
   FILE_EXISTS: 'FILE_EXISTS',
 } as const;
 
+export const CommandEvents = {
+  STARTUP_LOADING_PROGRESS: 'STARTUP_LOADING_PROGRESS',
+  MAIN_WINDOW_READY: 'MAIN_WINDOW_READY',
+  GET_LANGUAGE: 'GET_LANGUAGE',
+} as const;
+
+export const UpgradeEvents = {
+  CHECK_FOR_UPDATES: 'CHECK_FOR_UPDATES',
+  DOWNLOAD_UPDATE: 'SOFTWARE_DOWNLOAD_UPDATE',
+  INSTALL_UPDATE: 'SOFTWARE_INSTALL_UPDATE',
+  UPGRADE_PROGRESS: 'UPGRADE_PROGRESS',
+} as const;
+
 export type WindowEventKeys = keyof typeof WindowEvents;
 export type DialogEventKeys = keyof typeof DialogEvents;
 export type FileManagerEventKeys = keyof typeof FileManagerEvents;
-
+export type UpgradeEventKeys = keyof typeof UpgradeEvents;
 export const Events = {
+  ...CommandEvents,
   ...WindowEvents,
   ...DialogEvents,
   ...FileManagerEvents,
+  ...UpgradeEvents,
 } as const;
 
 export type EventKeys = keyof typeof Events;
