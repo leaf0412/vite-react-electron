@@ -39,7 +39,7 @@ jobs:
         continue-on-error: true
         
       - name: Build
-        run: npm run build
+        run: npm run package
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -48,7 +48,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-${{ matrix.os }}
-          path: release/
+          path: |
+            release/*.exe
+            release/*.dmg
+            release/*.AppImage
+            release/*.zip
           retention-days: 1
           if-no-files-found: error
 
@@ -61,6 +65,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       
       - name: Download artifacts
         uses: actions/download-artifact@v4
@@ -72,6 +78,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
-            build-*/release/**/*.exe
-            build-*/release/**/*.dmg
-            build-*/release/**/*.AppImage
+            build-*/release/*.exe
+            build-*/release/*.dmg
+            build-*/release/*.AppImage
+            build-*/release/*.zip
+          draft: false
+          prerelease: false
+          generate_release_notes: true
