@@ -1,5 +1,10 @@
 # Changelog
 
+## <small>0.1.1 (2025-04-03)</small>
+
+* ci: 更新发布配置，修改构建后钩子命令为打包，移除不必要的 GitHub 令牌引用 ([b40d9da](https://github.com/leaf0412/vite-react-electron/commit/b40d9da))
+* ci: 更新构建工作流，移除不必要的步骤，添加完整的提取深度以支持版本发布 ([ce38488](https://github.com/leaf0412/vite-react-electron/commit/ce38488))
+
 ## 0.1.0 (2025-04-03)
 
 * fix: 更新 Home 组件的依赖项，优化路由懒加载实现 ([aff75a1](https://github.com/leaf0412/vite-react-electron/commit/aff75a1))
