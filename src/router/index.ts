@@ -1,11 +1,10 @@
 import { lazy } from 'react';
 import Startup from '@/pages/startup';
-import Home from '@/pages/home';
 
 const router = [
   {
     path: '/',
-    Component: Home,
+    Component: lazy(() => import('@/pages/home')),
   },
   {
     path: '/startup',

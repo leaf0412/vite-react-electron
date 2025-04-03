@@ -50,7 +50,7 @@ function Home() {
         message.error(t('home.updateError'));
       }
     });
-  }, []);
+  }, [t]);
 
   return (
     <div className='container'>
