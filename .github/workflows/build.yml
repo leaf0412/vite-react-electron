@@ -2,10 +2,7 @@ name: Build and Release
 
 on:
   push:
-    branches: [ main ]
     tags: [ 'v*' ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   build:
@@ -20,6 +17,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -30,14 +29,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Lint
-        run: npm run lint
-        continue-on-error: true
-        
-      - name: Type Check
-        run: npm run typecheck
-        continue-on-error: true
-        
       - name: Build
         run: npm run package
         env:
@@ -59,7 +50,6 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: write
 
@@ -85,3 +75,4 @@ jobs:
           draft: false
           prerelease: false
           generate_release_notes: true
+          name: Release ${{ github.ref_name }}
