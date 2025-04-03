@@ -2,10 +2,10 @@
   "name": "vite-react-electron",
   "private": true,
   "version": "0.0.1",
-  "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && electron-builder",
+    "build": "tsc && vite build",
+    "package": "npm run build && electron-builder",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "prepare": "npx simple-git-hooks",
@@ -27,9 +27,7 @@
     ]
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^7.0.0"
+    "electron-updater": "^6.6.2"
   },
   "devDependencies": {
     "@ant-design/icons": "^5.5.1",
@@ -42,12 +40,17 @@
     "@typescript-eslint/parser": "^7.1.1",
     "@vitejs/plugin-react": "^4.2.1",
     "antd": "^5.22.2",
-    "electron": "^30.0.1",
+    "electron": "^22.3.27",
     "electron-builder": "^24.13.3",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
+    "i18next": "^24.2.3",
     "lint-staged": "^15.2.10",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-i18next": "^15.4.1",
+    "react-router-dom": "^7.0.0",
     "release-it": "^17.10.0",
     "simple-git-hooks": "^2.11.1",
     "typescript": "~5.5.0",
