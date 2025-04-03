@@ -1,7 +1,6 @@
+import { lazy } from 'react';
+import Startup from '@/pages/startup';
 import Home from '@/pages/home';
-import Dialog from '@/pages/dialog';
-import Window from '@/pages/window';
-import FileManager from '@/pages/file-manager';
 
 const router = [
   {
@@ -9,16 +8,20 @@ const router = [
     Component: Home,
   },
   {
+    path: '/startup',
+    Component: Startup,
+  },
+  {
     path: '/dialog',
-    Component: Dialog,
+    Component: lazy(() => import('@/pages/dialog')),
   },
   {
     path: '/window',
-    Component: Window,
+    Component: lazy(() => import('@/pages/window')),
   },
   {
     path: '/file-manager',
-    Component: FileManager,
+    Component: lazy(() => import('@/pages/file-manager')),
   },
 ];
 

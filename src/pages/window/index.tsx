@@ -1,7 +1,7 @@
 function Window() {
   const handleNewWindow = async () => {
     await window.ipcRenderer.newWindow({
-      route: '/',
+      route: '/#/file-manager',
       width: 600,
       height: 400,
       show: true,

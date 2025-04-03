@@ -43,7 +43,6 @@ function Dialog() {
           buttons: ['是', '否', '取消'],
           defaultId: 0,
         });
-        console.log(msgResult);
 
         const buttonText = ['是', '否', '取消'][msgResult.response];
         await window.ipcRenderer.showInfo({
