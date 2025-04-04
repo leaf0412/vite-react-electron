@@ -38,7 +38,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: electron-builds
-          path: release/
+          path: |
+            release/*.exe
+            release/*.dmg
+            release/*.AppImage
+            release/*.zip
+            release/*.yml
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -48,6 +53,7 @@ jobs:
             release/*.dmg
             release/*.AppImage
             release/*.zip
+            release/*.yml
           body: "Automated release for ${{ github.ref_name }}"
           draft: false
           prerelease: false
