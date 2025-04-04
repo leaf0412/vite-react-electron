@@ -44,6 +44,7 @@ jobs:
             release/*.AppImage
             release/*.zip
             release/*.yml
+            release/*.yaml
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -54,6 +55,7 @@ jobs:
             release/*.AppImage
             release/*.zip
             release/*.yml
+            release/*.yaml
           body: "Automated release for ${{ github.ref_name }}"
           draft: false
           prerelease: false
