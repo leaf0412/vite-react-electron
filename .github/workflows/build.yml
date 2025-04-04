@@ -67,10 +67,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           files: |
-            build-*/release/*.exe
-            build-*/release/*.dmg
-            build-*/release/*.AppImage
-            build-*/release/*.zip
+            release/*.exe
+            release/*.dmg
+            release/*.AppImage
+            release/*.zip
           draft: false
           prerelease: false
           generate_release_notes: true
