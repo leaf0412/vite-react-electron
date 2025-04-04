@@ -13,7 +13,6 @@
     "publish": false
   },
   "hooks": {
-    "before:init": ["npm run lint", "npm run typecheck"],
-    "after:bump": "npm run package"
+    "before:init": ["npm run lint", "npm run typecheck"]
   }
 }
