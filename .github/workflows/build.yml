@@ -2,9 +2,9 @@ name: Build and Release Electron App
 
 on:
   push:
+    branches: [main]
     tags:
       - 'v*'  # 仅在 push tag 时触发，如 v1.0.0
-      - 'main'
 
 jobs:
   build:
