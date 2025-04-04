@@ -37,7 +37,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: electron-builds-${{ github.run_id }}
+          name: electron-builds-${{ matrix.os }}
           path: |
             release/*.exe
             release/*.dmg
