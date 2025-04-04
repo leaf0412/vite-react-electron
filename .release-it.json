@@ -2,7 +2,7 @@
   "git": {
     "commitMessage": "chore: release v${version}",
     "tagName": "v${version}",
-    "requireCleanWorkingDir": true,
+    "requireCleanWorkingDir": false,
     "requireBranch": "main"
   },
   "github": {
@@ -11,12 +11,6 @@
   },
   "npm": {
     "publish": false
-  },
-  "plugins": {
-    "@release-it/conventional-changelog": {
-      "preset": "angular",
-      "infile": "CHANGELOG.md"
-    }
   },
   "hooks": {
     "before:init": ["npm run lint", "npm run typecheck"],
