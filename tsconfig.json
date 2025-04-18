@@ -23,9 +23,11 @@
 
     "paths": {
       "@/*": ["src/*"],
-      "@electron/*": ["electron/*"]
+      "@main/*": ["src/main/*"],
+      "@renderer/*": ["src/renderer/*"],
+      "@shared/*": ["src/shared/*"]
     }
   },
-  "include": ["src", "electron"],
+  "include": ["src/main", "src/renderer", "src/types"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

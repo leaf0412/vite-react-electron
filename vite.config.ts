@@ -10,11 +10,11 @@ export default defineConfig({
     electron({
       main: {
         // Shortcut of `build.lib.entry`.
-        entry: 'electron/main.ts',
+        entry: 'src/main/main.ts',
         vite: {
           resolve: {
             alias: {
-              '@electron': path.resolve(__dirname, './electron'),
+              '@main': path.resolve(__dirname, './src/main'),
               '@': path.resolve(__dirname, './src'),
             },
           },
@@ -23,11 +23,11 @@ export default defineConfig({
       preload: {
         // Shortcut of `build.rollupOptions.input`.
         // Preload scripts may contain Web assets, so use the `build.rollupOptions.input` instead `build.lib.entry`.
-        input: path.join(__dirname, 'electron/preload.ts'),
+        input: path.join(__dirname, 'src/main/preload.ts'),
         vite: {
           resolve: {
             alias: {
-              '@electron': path.resolve(__dirname, './electron'),
+              '@main': path.resolve(__dirname, './src/main'),
               '@': path.resolve(__dirname, './src'),
             },
           },
@@ -46,6 +46,9 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@main': path.resolve(__dirname, './src/main'),
+      '@renderer': path.resolve(__dirname, './src/renderer'),
+      '@shared': path.resolve(__dirname, './src/shared'),
     },
   },
 });
