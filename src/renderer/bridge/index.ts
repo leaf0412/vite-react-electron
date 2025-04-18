@@ -1,7 +1,7 @@
-export * from './window';
-export * from './dialog';
-export * from './file';
-export * from './app';
+export * from '@renderer/bridge/window';
+export * from '@renderer/bridge/dialog';
+export * from '@renderer/bridge/file';
+export * from '@renderer/bridge/app';
 
 const ipcRenderer = window.ipcRenderer;
 
