@@ -3,7 +3,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { URL } from 'node:url';
 import { net } from 'electron';
-
+import { isDevelopment } from '@main/constants';
 export const defaultScheme = 'myapp';
 
 interface ProtocolOptions {
@@ -67,13 +67,12 @@ export const createProtocol = ({
       const requestUrl = new URL(request.url);
       const urlPath = normalizePath(requestUrl.pathname, directory);
       let basePath;
-      if (process.env.NODE_ENV === 'development') {
+      if (isDevelopment) {
         basePath = process.cwd();
       } else {
         basePath = app.getAppPath();
       }
       const filePath = path.resolve(basePath, urlPath);
-
       await fs.promises.access(filePath, fs.constants.R_OK);
       return net.fetch(`file://${filePath}`);
     } catch (error) {

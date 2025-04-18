@@ -1,20 +1,12 @@
 import { ipcMain, BrowserWindow, screen } from 'electron';
-import { WindowEvents } from '@/main/ipc/ipc-events';
-import { WindowInfo, WindowInfoParams } from '@/types/ipc/window';
-import WindowManager from '@main/core/window-manager';
-
-type ParamToInfoMap = {
-  isBounds: 'bounds';
-  isMaximized: 'isMaximized';
-  isMinimized: 'isMinimized';
-  isFullScreen: 'isFullScreen';
-  isVisible: 'isVisible';
-  isDestroyed: 'isDestroyed';
-  isFocused: 'isFocused';
-  isAlwaysOnTop: 'isAlwaysOnTop';
-};
-
-type ParamKey = keyof ParamToInfoMap;
+import WindowManager from '@main/core/window';
+import { WindowEvents } from '@main/core/window/event';
+import {
+  WindowInfo,
+  WindowInfoParams,
+  ParamKey,
+  ParamToInfoMap,
+} from '@/types/ipc/window';
 
 class WindowIpcHandler {
   private windowManager: WindowManager;

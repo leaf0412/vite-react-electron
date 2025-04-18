@@ -1,0 +1,13 @@
+export const FileManagerEvents = {
+  FILE_READ_DIRECTORY: 'FILE_READ_DIRECTORY',
+  FILE_CREATE_DIRECTORY: 'FILE_CREATE_DIRECTORY',
+  FILE_CREATE_FILE: 'FILE_CREATE_FILE',
+  FILE_READ: 'FILE_READ',
+  FILE_COPY: 'FILE_COPY',
+  FILE_MOVE: 'FILE_MOVE',
+  FILE_DELETE: 'FILE_DELETE',
+  FILE_GET_INFO: 'FILE_GET_INFO',
+  FILE_EXISTS: 'FILE_EXISTS',
+} as const;
+
+export type FileManagerEventKeys = keyof typeof FileManagerEvents;

@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron';
-import { UpgradeManager } from '@main/core/upgrade-manager';
-import { UpgradeEvents } from '@main/ipc/ipc-events';
+import UpgradeManager from '@main/core/upgrade';
+import { UpgradeEvents } from '@main/core/upgrade/event';
 
 export default class UpgradeIpcHandler {
   private upgradeManager: UpgradeManager;
@@ -49,4 +49,4 @@ export default class UpgradeIpcHandler {
       ipcMain.removeHandler(UpgradeEvents[key as keyof typeof UpgradeEvents]);
     });
   }
-} 
+}

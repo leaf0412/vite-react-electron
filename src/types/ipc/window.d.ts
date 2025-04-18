@@ -47,4 +47,17 @@ export interface WindowOperations {
   reloadWindow(winId?: number): Promise<void>;
   getWindowBounds(): Promise<Electron.Rectangle>;
   getDisplayInfo(): Promise<Electron.Display[]>;
-} 
+}
+
+export type ParamToInfoMap = {
+  isBounds: 'bounds';
+  isMaximized: 'isMaximized';
+  isMinimized: 'isMinimized';
+  isFullScreen: 'isFullScreen';
+  isVisible: 'isVisible';
+  isDestroyed: 'isDestroyed';
+  isFocused: 'isFocused';
+  isAlwaysOnTop: 'isAlwaysOnTop';
+};
+
+export type ParamKey = keyof ParamToInfoMap;

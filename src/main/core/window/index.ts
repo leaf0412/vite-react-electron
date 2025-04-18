@@ -1,12 +1,12 @@
 import { app, BrowserWindow } from 'electron';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import createProtocol, { defaultScheme } from '@main/core/create-protocol';
 import {
   RENDERER_DIRECTORY_NAME,
   VITE_DEV_SERVER_URL,
   VITE_PUBLIC,
 } from '@main/constants';
+import { createProtocol, defaultScheme } from '@main/core/protocol';
 import { WindowOptions } from '@/types/ipc/window';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -16,11 +16,16 @@ class WindowManager {
   windowOptionsConfig = {};
   main: BrowserWindow | null = null;
   group = new Map();
-  constructor(props: { rendererDirectoryName?: string } = {}) {
+  constructor(
+    props: {
+      rendererDirectoryName?: string;
+    } = {}
+  ) {
     this.windowOptionsConfig = this.windowOptions();
     this.rendererDirectoryName =
       props.rendererDirectoryName || this.rendererDirectoryName;
     createProtocol({
+      scheme: defaultScheme,
       directory: {
         isSameDirectory: true,
         name: this.rendererDirectoryName,

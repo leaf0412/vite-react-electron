@@ -5,7 +5,7 @@ import type {
   MessageBoxOptions,
 } from 'electron';
 
-export class DialogManager {
+export default class DialogManager {
   static showOpenDialog(options: OpenDialogOptions) {
     return dialog.showOpenDialog(options);
   }
@@ -33,4 +33,4 @@ export class DialogManager {
   static showQuestionBox(options: Omit<MessageBoxOptions, 'type'>) {
     return dialog.showMessageBox({ ...options, type: 'question' });
   }
-} 
+}

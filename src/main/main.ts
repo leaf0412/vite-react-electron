@@ -1,12 +1,8 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
-import WindowManager from '@main/core/window-manager';
-import {
-  registerProtocol,
-  unregisterProtocol,
-} from '@main/core/create-protocol';
 import { isMac, VITE_DEV_SERVER_URL } from '@main/constants';
 import { Events } from '@main/ipc/ipc-events';
-import { UpgradeManager } from '@main/core/upgrade-manager';
+import { registerProtocol, unregisterProtocol } from '@main/core/protocol';
+import { UpgradeManager, WindowManager } from '@main/core';
 import {
   WindowIpcHandler,
   DialogIpcHandler,

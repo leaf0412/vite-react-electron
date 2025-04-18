@@ -3,7 +3,7 @@ import {
   autoUpdater,
   UpdateInfo as ElectronUpdateInfo,
 } from 'electron-updater';
-import { UpgradeEvents } from '@main/ipc/ipc-events';
+import { UpgradeEvents } from '@main/core/upgrade/event';
 
 export interface UpdateInfo {
   status: boolean;
@@ -38,7 +38,7 @@ type UpgradeProgressType =
   | 'download'
   | 'downloaded';
 
-export class UpgradeManager {
+export default class UpgradeManager {
   private options: UpdateOptions;
   private mainWindow: BrowserWindow | null = null;
   private updateResponse: UpdateInfo | null = null;

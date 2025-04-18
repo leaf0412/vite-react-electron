@@ -1,0 +1,11 @@
+export const DialogEvents = {
+  DIALOG_OPEN: 'DIALOG_OPEN',
+  DIALOG_SAVE: 'DIALOG_SAVE',
+  DIALOG_MESSAGE: 'DIALOG_MESSAGE',
+  DIALOG_ERROR: 'DIALOG_ERROR',
+  DIALOG_INFO: 'DIALOG_INFO',
+  DIALOG_WARNING: 'DIALOG_WARNING',
+  DIALOG_QUESTION: 'DIALOG_QUESTION',
+} as const;
+
+export type DialogEventKeys = keyof typeof DialogEvents;
