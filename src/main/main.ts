@@ -5,12 +5,14 @@ import {
   unregisterProtocol,
 } from '@main/core/create-protocol';
 import { isMac, VITE_DEV_SERVER_URL } from '@main/constants';
-import { Events } from '@/main/ipc/ipc-events';
+import { Events } from '@main/ipc/ipc-events';
 import { UpgradeManager } from '@main/core/upgrade-manager';
-import WindowIpcHandler from '@main/ipc/window';
-import DialogIpcHandler from '@main/ipc/dialog';
-import FileIpcHandler from '@main/ipc/file';
-import UpgradeIpcHandler from '@main/ipc/upgrade';
+import {
+  WindowIpcHandler,
+  DialogIpcHandler,
+  FileIpcHandler,
+  UpgradeIpcHandler,
+} from '@main/ipc';
 
 let winManager: WindowManager | null = null;
 let windowIpcHandler: WindowIpcHandler | null = null;
