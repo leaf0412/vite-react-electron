@@ -1,9 +1,9 @@
-import { BrowserWindow, ipcMain } from 'electron';
+import { BrowserWindow } from 'electron';
 import {
   autoUpdater,
   UpdateInfo as ElectronUpdateInfo,
 } from 'electron-updater';
-import { Events } from '../ipc/ipc-events';
+import { UpgradeEvents } from '@main/ipc/ipc-events';
 
 export interface UpdateInfo {
   status: boolean;
@@ -12,40 +12,16 @@ export interface UpdateInfo {
 }
 
 export interface UpdateOptions {
-  /**
-   * 检查更新的服务器地址
-   */
   serverUrl?: string;
-  /**
-   * 当前应用版本
-   */
   currentVersion: string;
-  /**
-   * 是否强制开发更新
-   */
   forceDevUpdateConfig?: boolean;
-  /**
-   * 是否自动下载更新
-   */
   autoDownload?: boolean;
-  /**
-   * 应用退出时自动安装
-   */
   autoInstallOnAppQuit?: boolean;
 }
 
 export interface UpdateProgress {
-  /**
-   * 下载进度百分比 (0-100)
-   */
   percent: number;
-  /**
-   * 已下载的字节数
-   */
   transferred: number;
-  /**
-   * 总字节数
-   */
   total: number;
 }
 
@@ -72,11 +48,7 @@ export class UpgradeManager {
     this.initializeAutoUpdater();
   }
 
-  /**
-   * 初始化自动更新器
-   */
   private initializeAutoUpdater(): void {
-    // 配置更新服务器
     const {
       serverUrl,
       forceDevUpdateConfig,
@@ -131,60 +103,10 @@ export class UpgradeManager {
     });
   }
 
-  /**
-   * 设置主窗口，用于显示更新进度
-   */
   setMainWindow(window: BrowserWindow) {
     this.mainWindow = window;
   }
 
-  /**
-   * listen
-   */
-  listen(): void {
-    ipcMain.handle(Events.CHECK_FOR_UPDATES, async () => {
-      const { serverUrl } = this.options;
-      if (!serverUrl) {
-        return {
-          status: false,
-          message: 'serverUrl is required',
-        };
-      }
-      return await this.checkForUpdates();
-    });
-
-    ipcMain.handle(Events.DOWNLOAD_UPDATE, async () => {
-      const { serverUrl } = this.options;
-      if (!serverUrl) {
-        return {
-          status: false,
-          message: 'serverUrl is required',
-        };
-      }
-      return await this.downloadUpdate();
-    });
-
-    ipcMain.handle(Events.INSTALL_UPDATE, async () => {
-      const { serverUrl } = this.options;
-      if (!serverUrl) {
-        return {
-          status: false,
-          message: 'serverUrl is required',
-        };
-      }
-      return await this.installUpdate();
-    });
-  }
-
-  unlisten(): void {
-    ipcMain.removeHandler(Events.CHECK_FOR_UPDATES);
-    ipcMain.removeHandler(Events.DOWNLOAD_UPDATE);
-    ipcMain.removeHandler(Events.INSTALL_UPDATE);
-  }
-
-  /**
-   * 检查更新
-   */
   async checkForUpdates(): Promise<UpdateInfo | UpdateError | null> {
     try {
       const result = await autoUpdater.checkForUpdates();
@@ -202,9 +124,6 @@ export class UpgradeManager {
     }
   }
 
-  /**
-   * 下载更新
-   */
   async downloadUpdate(): Promise<UpdateInfo | UpdateError> {
     try {
       const result = await autoUpdater.downloadUpdate();
@@ -218,9 +137,6 @@ export class UpgradeManager {
     }
   }
 
-  /**
-   * 安装更新
-   */
   async installUpdate(): Promise<void | UpdateError> {
     try {
       autoUpdater.quitAndInstall();
@@ -229,24 +145,18 @@ export class UpgradeManager {
     }
   }
 
-  /**
-   * 通知更新进度
-   */
   private notifyProgress(
     type: UpgradeProgressType,
     progress: UpdateProgress
   ): void {
     if (this.mainWindow) {
-      this.mainWindow.webContents.send(Events.UPGRADE_PROGRESS, {
+      this.mainWindow.webContents.send(UpgradeEvents.UPGRADE_PROGRESS, {
         type,
         progress,
       });
     }
   }
 
-  /**
-   * 处理错误
-   */
   private handleError(error: unknown): UpdateError {
     return {
       status: false,

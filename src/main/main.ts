@@ -6,10 +6,11 @@ import {
 } from '@main/core/create-protocol';
 import { isMac, VITE_DEV_SERVER_URL } from '@main/constants';
 import { Events } from '@/main/ipc/ipc-events';
-import { UpgradeManager } from '@main/handlers/upgrade-manager';
+import { UpgradeManager } from '@main/core/upgrade-manager';
 import WindowIpcHandler from '@main/ipc/window';
 import DialogIpcHandler from '@main/ipc/dialog';
 import FileIpcHandler from '@main/ipc/file';
+import UpgradeIpcHandler from '@main/ipc/upgrade';
 
 let winManager: WindowManager | null = null;
 let windowIpcHandler: WindowIpcHandler | null = null;
@@ -17,6 +18,7 @@ let mainWin: BrowserWindow | undefined = undefined;
 let startupWin: BrowserWindow | undefined = undefined;
 let loadingComplete = false;
 let upgradeManager: UpgradeManager | null = null;
+let upgradeIpcHandler: UpgradeIpcHandler | null = null;
 let dialogIpcHandler: DialogIpcHandler | null = null;
 let fileIpcHandler: FileIpcHandler | null = null;
 
@@ -99,7 +101,8 @@ function destroyApp() {
   unhandleIpcHandlers();
   windowIpcHandler?.destroyIpcHandlers();
   windowIpcHandler = null;
-  upgradeManager?.unlisten();
+  upgradeIpcHandler?.destroyIpcHandlers();
+  upgradeIpcHandler = null;
   dialogIpcHandler?.destroyIpcHandlers();
   dialogIpcHandler = null;
   fileIpcHandler?.destroyIpcHandlers();
@@ -123,12 +126,12 @@ async function initApp() {
   fileIpcHandler = new FileIpcHandler();
   fileIpcHandler.initIpcHandlers();
   upgradeManager = new UpgradeManager({
-    // 填写你的服务器地址
     serverUrl: VITE_DEV_SERVER_URL,
     currentVersion: app.getVersion(),
     autoInstallOnAppQuit: true,
   });
-  upgradeManager.listen();
+  upgradeIpcHandler = new UpgradeIpcHandler(upgradeManager);
+  upgradeIpcHandler.initIpcHandlers();
 
   createStartupWindow();
   createMainWindow();
