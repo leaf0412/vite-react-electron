@@ -7,18 +7,16 @@ import {
 import { isMac, VITE_DEV_SERVER_URL } from '@main/constants';
 import { Events } from '@/main/ipc/ipc-events';
 import {
-  initDialogIpcHandlers,
-  destroyDialogIpcHandlers,
-} from '@main/handlers/dialog-manager';
-import {
   initFileManagerIpcHandlers,
   destroyFileManagerIpcHandlers,
 } from '@main/handlers/file-manager';
 import { UpgradeManager } from '@main/handlers/upgrade-manager';
 import WindowIpcHandler from '@main/ipc/window';
+import DialogIpcHandler from '@main/ipc/dialog';
 
 let winManager: WindowManager | null = null;
 let windowIpcHandler: WindowIpcHandler | null = null;
+let dialogIpcHandler: DialogIpcHandler | null = null;
 let mainWin: BrowserWindow | undefined = undefined;
 let startupWin: BrowserWindow | undefined = undefined;
 let loadingComplete = false;
@@ -102,7 +100,8 @@ function destroyApp() {
   unregisterProtocol();
   unhandleIpcHandlers();
   windowIpcHandler?.destroyIpcHandlers();
-  destroyDialogIpcHandlers();
+  dialogIpcHandler?.destroyIpcHandlers();
+  dialogIpcHandler = null;
   destroyFileManagerIpcHandlers();
   upgradeManager?.unlisten();
 }
@@ -119,7 +118,8 @@ async function initApp() {
   windowIpcHandler = new WindowIpcHandler(winManager);
   windowIpcHandler.initIpcHandlers();
   setupIpcHandlers();
-  initDialogIpcHandlers();
+  dialogIpcHandler = new DialogIpcHandler();
+  dialogIpcHandler.initIpcHandlers();
   initFileManagerIpcHandlers();
   
   upgradeManager = new UpgradeManager({
