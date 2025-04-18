@@ -1,6 +1,7 @@
 {
   "name": "vite-react-electron",
   "private": true,
+  "type": "module",
   "version": "0.0.5",
   "scripts": {
     "dev": "vite",
@@ -40,7 +41,7 @@
     "@typescript-eslint/parser": "^7.1.1",
     "@vitejs/plugin-react": "^4.2.1",
     "antd": "^5.22.2",
-    "electron": "^22.3.27",
+    "electron": "^31.7.7",
     "electron-builder": "^24.13.3",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
