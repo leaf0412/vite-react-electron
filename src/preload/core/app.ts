@@ -1,7 +1,7 @@
 import { ipcRenderer } from 'electron';
-import { Events } from '@/main/ipc/ipc-events';
+import { Events } from '@main/ipc/ipc-events';
 import { IpcRendererEventCallback, ListenerType } from '@/types/ipc/events';
-import { handleEvent } from '@main/preload/utils';
+import { handleEvent } from '@preload/utils';
 export const appApi = {
   startupLoadingProgress: (
     status: ListenerType,

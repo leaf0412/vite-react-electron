@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron';
-import { Events } from '@/main/ipc/ipc-events';
+import { Events } from '@main/ipc/ipc-events';
 
 export const fileApi = {
   readDirectory: (dirPath: string) =>
