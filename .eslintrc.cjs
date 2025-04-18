@@ -12,7 +12,21 @@ module.exports = {
   rules: {
     'react-refresh/only-export-components': [
       'warn',
-      { allowConstantExport: true },
+      { allowConstantExport: true }
     ],
+    'react-hooks/exhaustive-deps': 'warn',
   },
-}
+  overrides: [
+    {
+      files: ['src/main/**/*.{ts,js}'],
+      env: {
+        node: true,
+        browser: false,
+      },
+      extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
+      rules: {
+        'no-console': 'off',
+      },
+    },
+  ],
+};
