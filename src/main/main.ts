@@ -8,6 +8,7 @@ import {
   DialogIpcHandler,
   FileIpcHandler,
   UpgradeIpcHandler,
+  UdpIpcHandler,
 } from '@main/ipc';
 
 let winManager: WindowManager | null = null;
@@ -19,6 +20,7 @@ let upgradeManager: UpgradeManager | null = null;
 let upgradeIpcHandler: UpgradeIpcHandler | null = null;
 let dialogIpcHandler: DialogIpcHandler | null = null;
 let fileIpcHandler: FileIpcHandler | null = null;
+let udpIpcHandler: UdpIpcHandler | null = null;
 
 const createStartupWindow = () => {
   startupWin = winManager?.createWindow({
@@ -105,6 +107,8 @@ function destroyApp() {
   dialogIpcHandler = null;
   fileIpcHandler?.destroyIpcHandlers();
   fileIpcHandler = null;
+  udpIpcHandler?.destroyIpcHandlers();
+  udpIpcHandler = null;
 }
 
 const updateStartupProgress = (progress: number) => {
@@ -130,6 +134,8 @@ async function initApp() {
   });
   upgradeIpcHandler = new UpgradeIpcHandler(upgradeManager);
   upgradeIpcHandler.initIpcHandlers();
+  udpIpcHandler = new UdpIpcHandler();
+  udpIpcHandler.initIpcHandlers();
 
   createStartupWindow();
   createMainWindow();

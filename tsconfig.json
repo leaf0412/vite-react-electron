@@ -24,10 +24,11 @@
     "paths": {
       "@/*": ["src/*"],
       "@main/*": ["src/main/*"],
+      "@preload/*": ["src/preload/*"],
       "@renderer/*": ["src/renderer/*"],
       "@shared/*": ["src/shared/*"]
     }
   },
-  "include": ["src/main", "src/renderer", "src/types"],
+  "include": ["src/main", "src/renderer", "src/types", "src/preload"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

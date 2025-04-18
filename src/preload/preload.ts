@@ -1,5 +1,5 @@
 import { ipcRenderer, contextBridge } from 'electron';
-import { appApi, dialogApi, fileApi, windowApi } from '@preload/core';
+import { appApi, dialogApi, fileApi, windowApi, udpApi } from '@preload/core';
 
 const systemApi = {
   platform: process.platform,
@@ -34,4 +34,5 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
   ...dialogApi,
   ...fileApi,
   ...appApi,
+  ...udpApi,
 });

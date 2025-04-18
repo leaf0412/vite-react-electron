@@ -23,11 +23,12 @@ export default defineConfig({
       preload: {
         // Shortcut of `build.rollupOptions.input`.
         // Preload scripts may contain Web assets, so use the `build.rollupOptions.input` instead `build.lib.entry`.
-        input: path.join(__dirname, 'src/main/preload.ts'),
+        input: path.join(__dirname, 'src/preload/preload.ts'),
         vite: {
           resolve: {
             alias: {
               '@main': path.resolve(__dirname, './src/main'),
+              '@preload': path.resolve(__dirname, './src/preload'),
               '@': path.resolve(__dirname, './src'),
             },
           },
@@ -47,6 +48,7 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@main': path.resolve(__dirname, './src/main'),
+      '@preload': path.resolve(__dirname, './src/preload'),
       '@renderer': path.resolve(__dirname, './src/renderer'),
       '@shared': path.resolve(__dirname, './src/shared'),
     },
