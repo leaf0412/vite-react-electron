@@ -6,21 +6,19 @@ import {
 } from '@main/core/create-protocol';
 import { isMac, VITE_DEV_SERVER_URL } from '@main/constants';
 import { Events } from '@/main/ipc/ipc-events';
-import {
-  initFileManagerIpcHandlers,
-  destroyFileManagerIpcHandlers,
-} from '@main/handlers/file-manager';
 import { UpgradeManager } from '@main/handlers/upgrade-manager';
 import WindowIpcHandler from '@main/ipc/window';
 import DialogIpcHandler from '@main/ipc/dialog';
+import FileIpcHandler from '@main/ipc/file';
 
 let winManager: WindowManager | null = null;
 let windowIpcHandler: WindowIpcHandler | null = null;
-let dialogIpcHandler: DialogIpcHandler | null = null;
 let mainWin: BrowserWindow | undefined = undefined;
 let startupWin: BrowserWindow | undefined = undefined;
 let loadingComplete = false;
 let upgradeManager: UpgradeManager | null = null;
+let dialogIpcHandler: DialogIpcHandler | null = null;
+let fileIpcHandler: FileIpcHandler | null = null;
 
 const createStartupWindow = () => {
   startupWin = winManager?.createWindow({
@@ -100,10 +98,12 @@ function destroyApp() {
   unregisterProtocol();
   unhandleIpcHandlers();
   windowIpcHandler?.destroyIpcHandlers();
+  windowIpcHandler = null;
+  upgradeManager?.unlisten();
   dialogIpcHandler?.destroyIpcHandlers();
   dialogIpcHandler = null;
-  destroyFileManagerIpcHandlers();
-  upgradeManager?.unlisten();
+  fileIpcHandler?.destroyIpcHandlers();
+  fileIpcHandler = null;
 }
 
 const updateStartupProgress = (progress: number) => {
@@ -120,8 +120,8 @@ async function initApp() {
   setupIpcHandlers();
   dialogIpcHandler = new DialogIpcHandler();
   dialogIpcHandler.initIpcHandlers();
-  initFileManagerIpcHandlers();
-  
+  fileIpcHandler = new FileIpcHandler();
+  fileIpcHandler.initIpcHandlers();
   upgradeManager = new UpgradeManager({
     // 填写你的服务器地址
     serverUrl: VITE_DEV_SERVER_URL,
@@ -138,7 +138,7 @@ const gotTheLock = app.requestSingleInstanceLock();
 
 if (!gotTheLock) {
   app.quit();
-} else {  
+} else {
   registerProtocol();
   initApp().catch(console.error);
 
