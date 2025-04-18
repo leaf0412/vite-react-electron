@@ -2,6 +2,7 @@ import { protocol, app } from 'electron';
 import path from 'node:path';
 import fs from 'node:fs';
 import { URL } from 'node:url';
+import { net } from 'electron';
 
 export const defaultScheme = 'myapp';
 
@@ -61,7 +62,7 @@ export const createProtocol = ({
     name: 'dist',
   },
 }: ProtocolOptions): void => {
-  protocol.registerFileProtocol(scheme, async (request, callback) => {
+  protocol.handle(scheme, async (request) => {
     try {
       const requestUrl = new URL(request.url);
       const urlPath = normalizePath(requestUrl.pathname, directory);
@@ -74,15 +75,15 @@ export const createProtocol = ({
       const filePath = path.resolve(basePath, urlPath);
 
       await fs.promises.access(filePath, fs.constants.R_OK);
-      callback(filePath);
+      return net.fetch(`file://${filePath}`);
     } catch (error) {
-      callback({ error: -2 });
+      return new Response(null, { status: 404 });
     }
   });
 };
 
 export const unregisterProtocol = (scheme = defaultScheme): void => {
-  protocol.unregisterProtocol(scheme);
+  protocol.unhandle(scheme);
 };
 
 export default createProtocol;
