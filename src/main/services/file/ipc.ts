@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron';
-import FileManager from '@main/core/file';
-import { FileManagerEvents } from '@main/core/file/event';
+import FileManager from '.';
+import { FileManagerEvents } from './event';
 
 class FileIpcHandler {
   private fileManager: FileManager;
