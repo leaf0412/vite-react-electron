@@ -6,6 +6,7 @@ import {
   FileOperations,
   EventOperations,
   UdpOperations,
+  WebSocketOperations,
 } from '@/types/ipc';
 
 declare namespace NodeJS {
@@ -22,6 +23,7 @@ declare global {
       DialogOperations &
       FileOperations &
       EventOperations &
-      UdpOperations;
+      UdpOperations &
+      WebSocketOperations;
   }
 }

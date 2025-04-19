@@ -4,3 +4,4 @@ export * from '@/types/ipc/file';
 export * from '@/types/ipc/events';
 export * from '@/types/ipc/system';
 export * from '@/types/ipc/udp';
+export * from '@/types/ipc/websocket';
