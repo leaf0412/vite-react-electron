@@ -9,6 +9,7 @@ import {
   FileIpcHandler,
   UpgradeIpcHandler,
   UdpIpcHandler,
+  WebSocketIpcHandler,
 } from '@main/ipc';
 
 let winManager: WindowManager | null = null;
@@ -21,6 +22,7 @@ let upgradeIpcHandler: UpgradeIpcHandler | null = null;
 let dialogIpcHandler: DialogIpcHandler | null = null;
 let fileIpcHandler: FileIpcHandler | null = null;
 let udpIpcHandler: UdpIpcHandler | null = null;
+let webSocketIpcHandler: WebSocketIpcHandler | null = null;
 
 const createStartupWindow = () => {
   startupWin = winManager?.createWindow({
@@ -109,6 +111,8 @@ function destroyApp() {
   fileIpcHandler = null;
   udpIpcHandler?.destroyIpcHandlers();
   udpIpcHandler = null;
+  webSocketIpcHandler?.destroyIpcHandlers();
+  webSocketIpcHandler = null;
 }
 
 const updateStartupProgress = (progress: number) => {
@@ -136,6 +140,8 @@ async function initApp() {
   upgradeIpcHandler.initIpcHandlers();
   udpIpcHandler = new UdpIpcHandler();
   udpIpcHandler.initIpcHandlers();
+  webSocketIpcHandler = new WebSocketIpcHandler();
+  webSocketIpcHandler.initIpcHandlers();
 
   createStartupWindow();
   createMainWindow();
