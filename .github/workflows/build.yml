@@ -28,7 +28,6 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          rm -rf node_modules package-lock.json
           npm install
 
       - name: Package Electron App
