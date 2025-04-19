@@ -4,8 +4,8 @@ import type {
   SaveDialogOptions,
   MessageBoxOptions,
 } from 'electron';
-import DialogManager from '@main/core/dialog';
-import { DialogEvents } from '@main/core/dialog/event';
+import DialogManager from '.';
+import { DialogEvents } from './event';
 
 class DialogIpcHandler {
   constructor() {}

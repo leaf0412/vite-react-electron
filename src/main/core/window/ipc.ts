@@ -1,6 +1,6 @@
 import { ipcMain, BrowserWindow, screen } from 'electron';
-import WindowManager from '@main/core/window';
-import { WindowEvents } from '@main/core/window/event';
+import WindowManager from '.';
+import { WindowEvents } from './event';
 import {
   WindowInfo,
   WindowInfoParams,

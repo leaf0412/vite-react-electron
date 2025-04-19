@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron';
-import UpgradeManager from '@main/core/upgrade';
-import { UpgradeEvents } from '@main/core/upgrade/event';
+import UpgradeManager from '.';
+import { UpgradeEvents } from './event';
 
 export default class UpgradeIpcHandler {
   private upgradeManager: UpgradeManager;

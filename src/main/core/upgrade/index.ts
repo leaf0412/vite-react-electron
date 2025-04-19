@@ -3,7 +3,7 @@ import {
   autoUpdater,
   UpdateInfo as ElectronUpdateInfo,
 } from 'electron-updater';
-import { UpgradeEvents } from '@main/core/upgrade/event';
+import { UpgradeEvents } from './event';
 
 export interface UpdateInfo {
   status: boolean;
