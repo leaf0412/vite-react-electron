@@ -10,6 +10,14 @@ import {
   upgradeProgress,
 } from '@/renderer/bridge';
 import { IpcRendererEventCallback } from '@/types/ipc/events';
+import {
+  createAndBindUdp,
+  getMessagesUdp,
+  destroyUdp,
+  createAndBindWebSocket,
+  destroyWebSocket,
+} from '@/renderer/bridge';
+
 const { Option } = Select;
 
 type UpdateInfo = {
@@ -40,6 +48,42 @@ function Home() {
     };
 
     upgradeProgress('on', handleUpgradeProgress);
+
+    // udp
+    createAndBindUdp(8443).then(result => {
+      console.log('createAndBindUdp', result);
+    });
+
+    // websocket
+    createAndBindWebSocket(8099).then(result => {
+      console.log('createAndBindWebSocket', result);
+    });
+
+    const interval = setInterval(() => {
+      getMessagesUdp<{
+        data: {
+          key: string;
+        };
+      }>().then(result => {
+        const seen = new Set();
+        const uniqueMessages = result.filter(message => {
+          const key = JSON.stringify(message.raw);
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+        const uniqueMessagesString = uniqueMessages.map(message => {
+          return message.parsed.data;
+        });
+        console.log('getMessagesUdp', uniqueMessagesString);
+      });
+    }, 3000);
+
+    return () => {
+      clearInterval(interval);
+      destroyUdp();
+      destroyWebSocket();
+    };
   }, []);
 
   const changeLanguage = useCallback(
