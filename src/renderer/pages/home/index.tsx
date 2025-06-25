@@ -16,6 +16,8 @@ import {
   destroyUdp,
   createAndBindWebSocket,
   destroyWebSocket,
+  isPortRunningUdp,
+  isPortRunningWebSocket,
 } from '@/renderer/bridge';
 
 const { Option } = Select;
@@ -49,14 +51,26 @@ function Home() {
 
     upgradeProgress('on', handleUpgradeProgress);
 
-    // udp
-    createAndBindUdp(8443).then(result => {
-      console.log('createAndBindUdp', result);
+    // udp - 检查端口是否已经在使用，避免重复绑定
+    isPortRunningUdp(8443).then(isRunning => {
+      if (!isRunning) {
+        createAndBindUdp(8443).then(result => {
+          console.log('createAndBindUdp', result);
+        });
+      } else {
+        console.log('UDP port 8443 is already running');
+      }
     });
 
-    // websocket
-    createAndBindWebSocket(8099).then(result => {
-      console.log('createAndBindWebSocket', result);
+    // websocket - 检查端口是否已经在使用，避免重复绑定
+    isPortRunningWebSocket(8099).then(isRunning => {
+      if (!isRunning) {
+        createAndBindWebSocket(8099).then(result => {
+          console.log('createAndBindWebSocket', result);
+        });
+      } else {
+        console.log('WebSocket port 8099 is already running');
+      }
     });
 
     const interval = setInterval(() => {

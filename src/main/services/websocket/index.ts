@@ -257,4 +257,8 @@ export default class WebSocketManager<T = unknown> {
   private generateClientId(): string {
     return `client_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
   }
+
+  public async dispose(): Promise<void> {
+    await this.destroy();
+  }
 }

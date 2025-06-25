@@ -5,8 +5,8 @@ import { WebSocketEvents } from './event';
 class WebSocketIpcHandler {
   private webSocketManager: WebSocketManager;
 
-  constructor() {
-    this.webSocketManager = new WebSocketManager();
+  constructor(webSocketManager: WebSocketManager) {
+    this.webSocketManager = webSocketManager;
   }
 
   initIpcHandlers() {

@@ -5,8 +5,8 @@ import { UdpEvents } from './event';
 class UdpIpcHandler {
   private udpManager: UdpManager;
 
-  constructor() {
-    this.udpManager = new UdpManager();
+  constructor(udpManager: UdpManager) {
+    this.udpManager = udpManager;
   }
 
   initIpcHandlers() {

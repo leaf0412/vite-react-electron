@@ -1,3 +1,4 @@
-export { default as UpgradeManager } from '@main/core/upgrade';
 export { default as WindowManager } from '@main/core/window';
-export { default as DialogManager } from '@main/core/dialog';
+export { ServiceContainer } from '@main/core/service-container';
+export { AppManager } from '@main/core/app-manager';
+export type { ServiceRegistry, ServiceName, IService } from '@main/core/types';

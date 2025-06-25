@@ -137,4 +137,8 @@ export default class UdpManager<T = unknown> {
   public setMaxMessages(maxMessages: number): void {
     this.maxMessages = maxMessages;
   }
+
+  public async dispose(): Promise<void> {
+    await this.destroy();
+  }
 }

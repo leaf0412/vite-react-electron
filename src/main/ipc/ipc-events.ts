@@ -1,12 +1,11 @@
 // core
 import { WindowEvents } from '@main/core/window/event';
-import { DialogEvents } from '@main/core/dialog/event';
-import { UpgradeEvents } from '@main/core/upgrade/event';
 // services
 import { FileManagerEvents } from '@main/services/file/event';
-// network
-import { UdpEvents } from '@main/network/udp/event';
-import { WebSocketEvents } from '@main/network/websocket/event';
+import { DialogEvents } from '@main/services/dialog/event';
+import { UpgradeEvents } from '@main/services/upgrade/event';
+import { UdpEvents } from '@main/services/udp/event';
+import { WebSocketEvents } from '@main/services/websocket/event';
 
 export const CommandEvents = {
   STARTUP_LOADING_PROGRESS: 'STARTUP_LOADING_PROGRESS',
