@@ -9,12 +9,14 @@ export interface DialogOptions {
   defaultId?: number;
 }
 
+import { IpcResponse } from './index';
+
 export interface DialogOperations {
-  openDialog(options: Electron.OpenDialogOptions): Promise<Electron.OpenDialogReturnValue>;
-  saveDialog(options: Electron.SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
-  showMessageDialog(options: DialogOptions): Promise<Electron.MessageBoxReturnValue>;
-  showErrorDialog(options: Omit<DialogOptions, 'type'>): Promise<Electron.MessageBoxReturnValue>;
-  showInfoDialog(options: Omit<DialogOptions, 'type'>): Promise<Electron.MessageBoxReturnValue>;
-  showWarningDialog(options: Omit<DialogOptions, 'type'>): Promise<Electron.MessageBoxReturnValue>;
-  showQuestionDialog(options: Omit<DialogOptions, 'type'>): Promise<Electron.MessageBoxReturnValue>;
+  openDialog(options: Electron.OpenDialogOptions): Promise<IpcResponse<Electron.OpenDialogReturnValue>>;
+  saveDialog(options: Electron.SaveDialogOptions): Promise<IpcResponse<Electron.SaveDialogReturnValue>>;
+  showMessageDialog(options: DialogOptions): Promise<IpcResponse<Electron.MessageBoxReturnValue>>;
+  showErrorDialog(options: Omit<DialogOptions, 'type'>): Promise<IpcResponse<Electron.MessageBoxReturnValue>>;
+  showInfoDialog(options: Omit<DialogOptions, 'type'>): Promise<IpcResponse<Electron.MessageBoxReturnValue>>;
+  showWarningDialog(options: Omit<DialogOptions, 'type'>): Promise<IpcResponse<Electron.MessageBoxReturnValue>>;
+  showQuestionDialog(options: Omit<DialogOptions, 'type'>): Promise<IpcResponse<Electron.MessageBoxReturnValue>>;
 } 

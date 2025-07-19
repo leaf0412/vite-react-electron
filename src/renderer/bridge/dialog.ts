@@ -3,30 +3,45 @@ import { DialogOptions } from '@/types/ipc/dialog';
 
 const ipcRenderer = window.ipcRenderer;
 
-export const openDialog = (options: OpenDialogOptions) => {
-  return ipcRenderer.openDialog(options);
+// 辅助函数：处理IPC响应格式
+const handleIpcResponse = <T,>(result: { success: boolean; data?: T; error?: string }): T => {
+  if (!result.success) {
+    throw new Error(result.error || '操作失败');
+  }
+  return result.data!;
 };
 
-export const saveDialog = (options: SaveDialogOptions) => {
-  return ipcRenderer.saveDialog(options);
+export const openDialog = async (options: OpenDialogOptions) => {
+  const result = await ipcRenderer.openDialog(options);
+  return handleIpcResponse(result);
 };
 
-export const showMessageDialog = (options: DialogOptions) => {
-  return ipcRenderer.showMessageDialog(options);
+export const saveDialog = async (options: SaveDialogOptions) => {
+  const result = await ipcRenderer.saveDialog(options);
+  return handleIpcResponse(result);
 };
 
-export const showErrorDialog = (options: Omit<DialogOptions, 'type'>) => {
-  return ipcRenderer.showErrorDialog(options);
+export const showMessageDialog = async (options: DialogOptions) => {
+  const result = await ipcRenderer.showMessageDialog(options);
+  return handleIpcResponse(result);
 };
 
-export const showInfoDialog = (options: Omit<DialogOptions, 'type'>) => {
-  return ipcRenderer.showInfoDialog(options);
+export const showErrorDialog = async (options: Omit<DialogOptions, 'type'>) => {
+  const result = await ipcRenderer.showErrorDialog(options);
+  return handleIpcResponse(result);
 };
 
-export const showWarningDialog = (options: Omit<DialogOptions, 'type'>) => {
-  return ipcRenderer.showWarningDialog(options);
+export const showInfoDialog = async (options: Omit<DialogOptions, 'type'>) => {
+  const result = await ipcRenderer.showInfoDialog(options);
+  return handleIpcResponse(result);
 };
 
-export const showQuestionDialog = (options: Omit<DialogOptions, 'type'>) => {
-  return ipcRenderer.showQuestionDialog(options);
+export const showWarningDialog = async (options: Omit<DialogOptions, 'type'>) => {
+  const result = await ipcRenderer.showWarningDialog(options);
+  return handleIpcResponse(result);
+};
+
+export const showQuestionDialog = async (options: Omit<DialogOptions, 'type'>) => {
+  const result = await ipcRenderer.showQuestionDialog(options);
+  return handleIpcResponse(result);
 };
