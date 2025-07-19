@@ -50,10 +50,18 @@ export const Events = {
   UDP_GET_RUNNING_PORTS: 'udp:get-running-ports',
   UDP_SET_MAX_MESSAGES: 'udp:set-max-messages',
 
+  // 系统事件
+  SYSTEM_GET_INFO: 'system:get-info',
+  SYSTEM_GET_PLATFORM: 'system:get-platform',
+  SYSTEM_GET_HOMEDIR: 'system:get-homedir',
+  SYSTEM_GET_VERSION: 'system:get-version',
+  SYSTEM_INIT_UPDATER: 'system:init-updater',
+
   // 更新事件
   UPDATE_CHECK: 'update:check',
   UPDATE_DOWNLOAD: 'update:download',
   UPDATE_INSTALL: 'update:install',
+  UPDATE_ERROR: 'update:error',
 } as const;
 
 export const AppConstants = {

@@ -1,7 +1,6 @@
 // core
 import { WindowEvents } from '@main/core/window/event';
-// services
-import { UpgradeEvents } from '@main/services/upgrade/event';
+
 // shared (导入文件和对话框相关事件)
 import { Events as SharedEvents } from '@main/shared/constants';
 
@@ -66,7 +65,6 @@ export const Events = {
   ...DialogEvents,
   ...FileEvents,
   ...NetworkEvents,
-  ...UpgradeEvents,
 } as const;
 
 export type EventKeys = keyof typeof Events;

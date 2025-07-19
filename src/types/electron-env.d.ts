@@ -1,6 +1,7 @@
 /// <reference types="vite-electron-plugin/electron-env" />
 import {
   SystemInfo,
+  SystemOperations,
   WindowOperations,
   DialogOperations,
   FileOperations,
@@ -19,6 +20,7 @@ declare global {
   interface Window {
     ipcRenderer: import('electron').IpcRenderer &
       SystemInfo &
+      SystemOperations &
       WindowOperations &
       DialogOperations &
       FileOperations &

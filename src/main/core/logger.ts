@@ -1,12 +1,6 @@
-type LogLevel = 'error' | 'warn' | 'info' | 'debug';
+import log from 'electron-log';
 
-interface LogEntry {
-  level: LogLevel;
-  message: string;
-  timestamp: string;
-  context?: string;
-  data?: unknown;
-}
+type LogLevel = 'error' | 'warn' | 'info' | 'debug';
 
 class Logger {
   private context?: string;
@@ -37,35 +31,26 @@ class Logger {
   }
 
   private log(level: LogLevel, message: string, data?: unknown): void {
-    const entry: LogEntry = {
-      level,
-      message,
-      timestamp: new Date().toISOString(),
-      context: this.context,
-      data,
-    };
-
     const contextStr = this.context ? `[${this.context}] ` : '';
-    const logMessage = `[${level.toUpperCase()}] ${entry.timestamp} ${contextStr}${message}`;
+    const logMessage = `${contextStr}${message}`;
 
     switch (level) {
       case 'error':
-        console.error(logMessage, data);
+        log.error(logMessage, data);
         break;
       case 'warn':
-        console.warn(logMessage, data);
+        log.warn(logMessage, data);
         break;
       case 'info':
-        console.log(logMessage, data);
+        log.info(logMessage, data);
         break;
       case 'debug':
-        if (process.env.NODE_ENV === 'development') {
-          console.debug(logMessage, data);
-        }
+        log.debug(logMessage, data);
         break;
     }
   }
 }
 
 export { Logger };
+export type { LogLevel };
 export const logger = Logger.create('Main'); 

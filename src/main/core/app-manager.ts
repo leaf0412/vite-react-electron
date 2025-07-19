@@ -4,18 +4,16 @@ import type { ServiceRegistry } from './types';
 import { IpcManager } from '@main/ipc/manager';
 import { Logger } from './logger';
 import { WindowManager } from '@main/core';
-import { 
-  UpgradeManager
-} from '@main/services';
+
 import { FileService, FileIpcHandler } from '@main/features/file';
 import { DialogService, DialogIpcHandler } from '@main/features/dialog';
 import { NetworkService, NetworkIpcHandler } from '@main/features/network';
+import { SystemService, SystemIpcHandler } from '@main/features/system';
 import {
   WindowIpcHandler,
-  UpgradeIpcHandler,
 } from '@main/ipc';
 import { Events } from '@main/ipc/ipc-events';
-import { VITE_DEV_SERVER_URL } from '@main/constants';
+
 import { unregisterProtocol } from '@main/core/protocol';
 
 export class AppManager {
@@ -32,6 +30,8 @@ export class AppManager {
   private dialogIpcHandler = new DialogIpcHandler(this.dialogService);
   private networkService = new NetworkService();
   private networkIpcHandler = new NetworkIpcHandler(this.networkService);
+  private systemService = new SystemService();
+  private systemIpcHandler = new SystemIpcHandler(this.systemService);
 
   async initialize(): Promise<void> {
     if (this.isInitialized) {
@@ -57,6 +57,9 @@ export class AppManager {
       this.logger.info('创建窗口');
       await this.createWindows();
       
+      this.logger.info('初始化系统服务');
+      this.initializeSystemService();
+      
       this.isInitialized = true;
       this.logger.info('AppManager 初始化完成');
     } catch (error) {
@@ -70,27 +73,30 @@ export class AppManager {
     this.serviceContainer.register('dialogManager', () => this.dialogService);
     this.serviceContainer.register('fileManager', () => this.fileService);
     this.serviceContainer.register('networkManager', () => this.networkService);
-    this.serviceContainer.register('upgradeManager', () => new UpgradeManager({
-      serverUrl: VITE_DEV_SERVER_URL,
-      currentVersion: app.getVersion(),
-      autoInstallOnAppQuit: true,
-    }));
+    // 升级管理器已迁移到 SystemService
   }
 
   private registerIpcHandlers(): void {
     const windowManager = this.serviceContainer.get('windowManager');
-    const upgradeManager = this.serviceContainer.get('upgradeManager');
 
     // 注册旧的IPC处理器
     this.ipcManager.registerHandlers([
       new WindowIpcHandler(windowManager),
-      new UpgradeIpcHandler(upgradeManager),
     ]);
     
     // 注册新的功能模块 IPC 处理器
     this.fileIpcHandler.register();
     this.dialogIpcHandler.register();
     this.networkIpcHandler.register();
+    this.systemIpcHandler.register();
+  }
+
+  private initializeSystemService(): void {
+    this.systemService.initializeUpdater({
+      serverUrl: undefined, // 根据需要配置
+      currentVersion: app.getVersion(),
+      autoInstallOnAppQuit: true,
+    }, this.mainWindow);
   }
 
   private async initializeIpc(): Promise<void> {
@@ -112,10 +118,9 @@ export class AppManager {
 
   private async createWindows(): Promise<void> {
     const windowManager = this.serviceContainer.get('windowManager');
-    const upgradeManager = this.serviceContainer.get('upgradeManager');
 
     this.createStartupWindow(windowManager);
-    this.createMainWindow(windowManager, upgradeManager);
+    this.createMainWindow(windowManager);
   }
 
   private createStartupWindow(windowManager: ServiceRegistry['windowManager']): void {
@@ -137,7 +142,7 @@ export class AppManager {
     });
   }
 
-  private createMainWindow(windowManager: ServiceRegistry['windowManager'], upgradeManager: ServiceRegistry['upgradeManager']): void {
+  private createMainWindow(windowManager: ServiceRegistry['windowManager']): void {
     this.mainWindow = windowManager.createWindow({
       isMainWin: true,
       show: false,
@@ -148,7 +153,7 @@ export class AppManager {
     });
 
     if (this.mainWindow) {
-      upgradeManager.setMainWindow(this.mainWindow);
+      this.systemService.setMainWindow(this.mainWindow);
     }
 
     this.mainWindow?.webContents.on('dom-ready', () => {
@@ -194,11 +199,15 @@ export class AppManager {
       this.fileIpcHandler.unregister();
       this.dialogIpcHandler.unregister();
       this.networkIpcHandler.unregister();
+      this.systemIpcHandler.unregister();
       // 再销毁旧的IPC处理器
       await this.ipcManager.destroyAll();
       
       this.logger.debug('销毁网络服务');
       await this.networkService.destroy();
+      
+      this.logger.debug('销毁系统服务');
+      this.systemService.destroy();
       
       this.logger.debug('销毁服务容器');
       await this.serviceContainer.dispose();

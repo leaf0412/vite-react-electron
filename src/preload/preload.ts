@@ -6,9 +6,10 @@ import {
   windowApi,
   udpApi,
   websocketApi,
+  systemApi as systemApiCore,
 } from '@preload/core';
 
-const systemApi = {
+const systemBasicInfo = {
   platform: process.platform,
   homedir: process.env.HOME || process.env.USERPROFILE || '',
 };
@@ -35,7 +36,8 @@ const ipcApi = {
 };
 
 contextBridge.exposeInMainWorld('ipcRenderer', {
-  ...systemApi,
+  ...systemBasicInfo,
+  ...systemApiCore,
   ...ipcApi,
   ...windowApi,
   ...dialogApi,
