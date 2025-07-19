@@ -2,8 +2,6 @@
 import { WindowEvents } from '@main/core/window/event';
 // services
 import { UpgradeEvents } from '@main/services/upgrade/event';
-import { UdpEvents } from '@main/services/udp/event';
-import { WebSocketEvents } from '@main/services/websocket/event';
 // shared (导入文件和对话框相关事件)
 import { Events as SharedEvents } from '@main/shared/constants';
 
@@ -36,14 +34,39 @@ const DialogEvents = {
   DIALOG_QUESTION: SharedEvents.DIALOG_QUESTION,
 } as const;
 
+// 提取网络相关的事件
+const NetworkEvents = {
+  // UDP Events
+  UDP_CREATE: SharedEvents.UDP_CREATE,
+  UDP_DESTROY: SharedEvents.UDP_DESTROY,
+  UDP_STOP: SharedEvents.UDP_STOP,
+  UDP_SEND: SharedEvents.UDP_SEND,
+  UDP_GET_MESSAGES: SharedEvents.UDP_GET_MESSAGES,
+  UDP_CLEAR_MESSAGES: SharedEvents.UDP_CLEAR_MESSAGES,
+  UDP_IS_PORT_RUNNING: SharedEvents.UDP_IS_PORT_RUNNING,
+  UDP_GET_RUNNING_PORTS: SharedEvents.UDP_GET_RUNNING_PORTS,
+  UDP_SET_MAX_MESSAGES: SharedEvents.UDP_SET_MAX_MESSAGES,
+  
+  // WebSocket Events
+  WEBSOCKET_CREATE: SharedEvents.WEBSOCKET_CREATE,
+  WEBSOCKET_DESTROY: SharedEvents.WEBSOCKET_DESTROY,
+  WEBSOCKET_STOP: SharedEvents.WEBSOCKET_STOP,
+  WEBSOCKET_SEND: SharedEvents.WEBSOCKET_SEND,
+  WEBSOCKET_SEND_TO_ALL: SharedEvents.WEBSOCKET_SEND_TO_ALL,
+  WEBSOCKET_GET_MESSAGES: SharedEvents.WEBSOCKET_GET_MESSAGES,
+  WEBSOCKET_CLEAR_MESSAGES: SharedEvents.WEBSOCKET_CLEAR_MESSAGES,
+  WEBSOCKET_IS_PORT_RUNNING: SharedEvents.WEBSOCKET_IS_PORT_RUNNING,
+  WEBSOCKET_GET_RUNNING_PORTS: SharedEvents.WEBSOCKET_GET_RUNNING_PORTS,
+  WEBSOCKET_SET_MAX_MESSAGES: SharedEvents.WEBSOCKET_SET_MAX_MESSAGES,
+} as const;
+
 export const Events = {
   ...CommandEvents,
   ...WindowEvents,
   ...DialogEvents,
   ...FileEvents,
+  ...NetworkEvents,
   ...UpgradeEvents,
-  ...UdpEvents,
-  ...WebSocketEvents,
 } as const;
 
 export type EventKeys = keyof typeof Events;
