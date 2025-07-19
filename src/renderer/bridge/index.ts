@@ -4,6 +4,7 @@ export * from '@renderer/bridge/file';
 export * from '@renderer/bridge/app';
 export * from '@renderer/bridge/udp';
 export * from '@renderer/bridge/websocket';
+export * from '@renderer/bridge/system';
 
 const ipcRenderer = window.ipcRenderer;
 

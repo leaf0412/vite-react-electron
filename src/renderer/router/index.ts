@@ -22,6 +22,10 @@ const router = [
     path: '/file-manager',
     Component: lazy(() => import('@renderer/pages/file-manager')),
   },
+  {
+    path: '/system',
+    Component: lazy(() => import('@renderer/pages/system')),
+  },
 ];
 
 export default router;
