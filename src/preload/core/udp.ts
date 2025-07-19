@@ -1,35 +1,35 @@
 import { ipcRenderer } from 'electron';
-import { Events } from '@main/ipc/ipc-events';
+import { Events } from '@main/shared/constants';
 
 export const udpApi = {
   createAndBindUdp: (
     port: number,
     options?: { broadcast?: boolean; multicastAddr?: string }
   ) => {
-    return ipcRenderer.invoke(Events.CREATE_AND_BIND_UDP, port, options);
+    return ipcRenderer.invoke(Events.UDP_CREATE, port, options);
   },
   destroyUdp: () => {
-    return ipcRenderer.invoke(Events.DESTROY_UDP);
+    return ipcRenderer.invoke(Events.UDP_DESTROY);
   },
   stopUdp: (port: number) => {
-    return ipcRenderer.invoke(Events.STOP_UDP, port);
+    return ipcRenderer.invoke(Events.UDP_STOP, port);
   },
   sendUdp: (message: string, address: string, port: number) => {
-    return ipcRenderer.invoke(Events.SEND_UDP, message, address, port);
+    return ipcRenderer.invoke(Events.UDP_SEND, message, address, port);
   },
   getMessagesUdp: () => {
-    return ipcRenderer.invoke(Events.GET_MESSAGES_UDP);
+    return ipcRenderer.invoke(Events.UDP_GET_MESSAGES);
   },
   clearMessagesUdp: () => {
-    return ipcRenderer.invoke(Events.CLEAR_MESSAGES_UDP);
+    return ipcRenderer.invoke(Events.UDP_CLEAR_MESSAGES);
   },
   isPortRunningUdp: (port: number) => {
-    return ipcRenderer.invoke(Events.IS_PORT_RUNNING_UDP, port);
+    return ipcRenderer.invoke(Events.UDP_IS_PORT_RUNNING, port);
   },
   getRunningPortsUdp: () => {
-    return ipcRenderer.invoke(Events.GET_RUNNING_PORTS_UDP);
+    return ipcRenderer.invoke(Events.UDP_GET_RUNNING_PORTS);
   },
   setMaxMessagesUdp: (maxMessages: number) => {
-    return ipcRenderer.invoke(Events.SET_MAX_MESSAGES_UDP, maxMessages);
+    return ipcRenderer.invoke(Events.UDP_SET_MAX_MESSAGES, maxMessages);
   },
 };
