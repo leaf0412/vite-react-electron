@@ -7,9 +7,17 @@
   },
   files: ['dist', 'dist-electron'],
   mac: {
-    target: ['dmg', 'zip'],
+    target: [
+      {
+        target: 'dmg'
+      },
+      {
+        target: 'zip'
+      }
+    ],
     artifactName: '${productName}-Mac-${version}-Installer.${ext}',
     gatekeeperAssess: false,
+    identity: null
   },
   win: {
     target: [
@@ -35,5 +43,6 @@
   publish: {
     provider: 'generic',
     url: '',
+    channel: 'latest',
   },
 }
