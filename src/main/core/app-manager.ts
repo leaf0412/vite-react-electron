@@ -5,17 +5,14 @@ import { IpcManager } from '@main/ipc/manager';
 import { Logger } from './logger';
 import { WindowManager } from '@main/core';
 import { 
-  UpgradeManager, 
-  UdpManager, 
-  WebSocketManager 
+  UpgradeManager
 } from '@main/services';
 import { FileService, FileIpcHandler } from '@main/features/file';
 import { DialogService, DialogIpcHandler } from '@main/features/dialog';
+import { NetworkService, NetworkIpcHandler } from '@main/features/network';
 import {
   WindowIpcHandler,
   UpgradeIpcHandler,
-  UdpIpcHandler,
-  WebSocketIpcHandler,
 } from '@main/ipc';
 import { Events } from '@main/ipc/ipc-events';
 import { VITE_DEV_SERVER_URL } from '@main/constants';
@@ -33,6 +30,8 @@ export class AppManager {
   private fileIpcHandler = new FileIpcHandler(this.fileService);
   private dialogService = new DialogService();
   private dialogIpcHandler = new DialogIpcHandler(this.dialogService);
+  private networkService = new NetworkService();
+  private networkIpcHandler = new NetworkIpcHandler(this.networkService);
 
   async initialize(): Promise<void> {
     if (this.isInitialized) {
@@ -70,32 +69,28 @@ export class AppManager {
     this.serviceContainer.register('windowManager', () => new WindowManager());
     this.serviceContainer.register('dialogManager', () => this.dialogService);
     this.serviceContainer.register('fileManager', () => this.fileService);
+    this.serviceContainer.register('networkManager', () => this.networkService);
     this.serviceContainer.register('upgradeManager', () => new UpgradeManager({
       serverUrl: VITE_DEV_SERVER_URL,
       currentVersion: app.getVersion(),
       autoInstallOnAppQuit: true,
     }));
-    this.serviceContainer.register('udpManager', () => new UdpManager());
-    this.serviceContainer.register('websocketManager', () => new WebSocketManager());
   }
 
   private registerIpcHandlers(): void {
     const windowManager = this.serviceContainer.get('windowManager');
     const upgradeManager = this.serviceContainer.get('upgradeManager');
-    const udpManager = this.serviceContainer.get('udpManager');
-    const websocketManager = this.serviceContainer.get('websocketManager');
 
     // 注册旧的IPC处理器
     this.ipcManager.registerHandlers([
       new WindowIpcHandler(windowManager),
       new UpgradeIpcHandler(upgradeManager),
-      new UdpIpcHandler(udpManager),
-      new WebSocketIpcHandler(websocketManager),
     ]);
     
     // 注册新的功能模块 IPC 处理器
     this.fileIpcHandler.register();
     this.dialogIpcHandler.register();
+    this.networkIpcHandler.register();
   }
 
   private async initializeIpc(): Promise<void> {
@@ -198,8 +193,12 @@ export class AppManager {
       // 先销毁新的功能模块 IPC 处理器
       this.fileIpcHandler.unregister();
       this.dialogIpcHandler.unregister();
+      this.networkIpcHandler.unregister();
       // 再销毁旧的IPC处理器
       await this.ipcManager.destroyAll();
+      
+      this.logger.debug('销毁网络服务');
+      await this.networkService.destroy();
       
       this.logger.debug('销毁服务容器');
       await this.serviceContainer.dispose();
