@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, Empty, message } from 'antd';
 import { FolderOpenOutlined } from '@ant-design/icons';
 import FileManager from '@renderer/components/FileManager/FileManager';
+import { openDialog } from '@renderer/bridge';
 import './index.css';
 import { Link } from 'react-router-dom';
 
@@ -10,7 +11,7 @@ const FileManagerPage: React.FC = () => {
 
   const handleSelectFolder = async () => {
     try {
-      const result = await window.ipcRenderer.openDialog({
+      const result = await openDialog({
         title: '选择文件夹',
         properties: ['openDirectory'],
         buttonLabel: '选择文件夹',
