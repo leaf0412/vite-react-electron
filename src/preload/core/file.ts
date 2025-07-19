@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron';
-import { Events } from '@main/ipc/ipc-events';
+import { Events } from '@main/shared/constants';
 
 export const fileApi = {
   readDirectory: (dirPath: string) =>
@@ -9,13 +9,13 @@ export const fileApi = {
   createFile: (filePath: string, content?: string) =>
     ipcRenderer.invoke(Events.FILE_CREATE_FILE, filePath, content),
   readFile: (filePath: string, encoding?: BufferEncoding) =>
-    ipcRenderer.invoke(Events.FILE_READ, filePath, encoding),
+    ipcRenderer.invoke(Events.FILE_READ_FILE, filePath, encoding),
   copyFile: (sourcePath: string, destinationPath: string) =>
-    ipcRenderer.invoke(Events.FILE_COPY, sourcePath, destinationPath),
+    ipcRenderer.invoke(Events.FILE_COPY_FILE, sourcePath, destinationPath),
   moveFile: (sourcePath: string, destinationPath: string) =>
-    ipcRenderer.invoke(Events.FILE_MOVE, sourcePath, destinationPath),
+    ipcRenderer.invoke(Events.FILE_MOVE_FILE, sourcePath, destinationPath),
   deleteFile: (targetPath: string) =>
-    ipcRenderer.invoke(Events.FILE_DELETE, targetPath),
+    ipcRenderer.invoke(Events.FILE_DELETE_FILE, targetPath),
   getFileInfo: (targetPath: string) =>
     ipcRenderer.invoke(Events.FILE_GET_INFO, targetPath),
   existsFile: (targetPath: string) =>

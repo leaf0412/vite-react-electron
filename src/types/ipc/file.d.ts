@@ -7,14 +7,20 @@ export interface FileInfo {
   createdTime: Date;
 }
 
+export interface IpcResponse<T = unknown> {
+  success: boolean;
+  data?: T;
+  error?: string;
+}
+
 export interface FileOperations {
-  readDirectory(dirPath: string): Promise<FileInfo[]>;
-  createDirectory(dirPath: string): Promise<void>;
-  createFile(filePath: string, content?: string): Promise<void>;
-  readFile(filePath: string, encoding?: BufferEncoding): Promise<string>;
-  copyFile(sourcePath: string, destinationPath: string): Promise<void>;
-  moveFile(sourcePath: string, destinationPath: string): Promise<void>;
-  deleteFile(targetPath: string): Promise<void>;
-  getFileInfo(targetPath: string): Promise<FileInfo>;
-  existsFile(targetPath: string): Promise<boolean>;
+  readDirectory(dirPath: string): Promise<IpcResponse<FileInfo[]>>;
+  createDirectory(dirPath: string): Promise<IpcResponse<void>>;
+  createFile(filePath: string, content?: string): Promise<IpcResponse<void>>;
+  readFile(filePath: string, encoding?: BufferEncoding): Promise<IpcResponse<string>>;
+  copyFile(sourcePath: string, destinationPath: string): Promise<IpcResponse<void>>;
+  moveFile(sourcePath: string, destinationPath: string): Promise<IpcResponse<void>>;
+  deleteFile(targetPath: string): Promise<IpcResponse<void>>;
+  getFileInfo(targetPath: string): Promise<IpcResponse<FileInfo>>;
+  existsFile(targetPath: string): Promise<IpcResponse<boolean>>;
 } 
