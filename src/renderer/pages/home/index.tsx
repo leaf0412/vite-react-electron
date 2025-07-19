@@ -52,24 +52,36 @@ function Home() {
     upgradeProgress('on', handleUpgradeProgress);
 
     // udp - 检查端口是否已经在使用，避免重复绑定
-    isPortRunningUdp(8443).then(isRunning => {
-      if (!isRunning) {
+    isPortRunningUdp(8443).then(response => {
+      if (response.success && !response.data) {
         createAndBindUdp(8443).then(result => {
-          console.log('createAndBindUdp', result);
+          if (result.success) {
+            console.log('createAndBindUdp success:', result.data);
+          } else {
+            console.error('createAndBindUdp failed:', result.error);
+          }
         });
-      } else {
+      } else if (response.success && response.data) {
         console.log('UDP port 8443 is already running');
+      } else {
+        console.error('Failed to check UDP port status:', response.error);
       }
     });
 
     // websocket - 检查端口是否已经在使用，避免重复绑定
-    isPortRunningWebSocket(8099).then(isRunning => {
-      if (!isRunning) {
+    isPortRunningWebSocket(8099).then(response => {
+      if (response.success && !response.data) {
         createAndBindWebSocket(8099).then(result => {
-          console.log('createAndBindWebSocket', result);
+          if (result.success) {
+            console.log('createAndBindWebSocket success:', result.data);
+          } else {
+            console.error('createAndBindWebSocket failed:', result.error);
+          }
         });
-      } else {
+      } else if (response.success && response.data) {
         console.log('WebSocket port 8099 is already running');
+      } else {
+        console.error('Failed to check WebSocket port status:', response.error);
       }
     });
 
@@ -78,18 +90,22 @@ function Home() {
         data: {
           key: string;
         };
-      }>().then(result => {
-        const seen = new Set();
-        const uniqueMessages = result.filter(message => {
-          const key = JSON.stringify(message.raw);
-          if (seen.has(key)) return false;
-          seen.add(key);
-          return true;
-        });
-        const uniqueMessagesString = uniqueMessages.map(message => {
-          return message.parsed.data;
-        });
-        console.log('getMessagesUdp', uniqueMessagesString);
+      }>().then(response => {
+        if (response.success && response.data) {
+          const seen = new Set();
+          const uniqueMessages = response.data.filter(message => {
+            const key = JSON.stringify(message.raw);
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+          });
+          const uniqueMessagesString = uniqueMessages.map(message => {
+            return message.parsed.data;
+          });
+          console.log('getMessagesUdp', uniqueMessagesString);
+        } else if (!response.success) {
+          console.error('Failed to get UDP messages:', response.error);
+        }
       });
     }, 3000);
 

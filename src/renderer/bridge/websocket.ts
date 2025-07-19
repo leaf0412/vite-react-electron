@@ -1,7 +1,7 @@
 const ipcRenderer = window.ipcRenderer;
 
-export const createAndBindWebSocket = (port: number) => {
-  return ipcRenderer.createAndBindWebSocket(port);
+export const createAndBindWebSocket = (port: number, options?: { path?: string }) => {
+  return ipcRenderer.createAndBindWebSocket(port, options);
 };
 
 export const destroyWebSocket = () => {
@@ -12,8 +12,12 @@ export const stopWebSocket = (port: number) => {
   return ipcRenderer.stopWebSocket(port);
 };
 
-export const sendWebSocket = (message: string, port: number) => {
-  return ipcRenderer.sendWebSocket(message, port);
+export const sendWebSocket = (message: string | Buffer, clientId: string, port: number) => {
+  return ipcRenderer.sendWebSocket(message, clientId, port);
+};
+
+export const sendToAllWebSocket = (message: string | Buffer, port: number) => {
+  return ipcRenderer.sendToAllWebSocket(message, port);
 };
 
 export const getMessagesWebSocket = <T>() => {
