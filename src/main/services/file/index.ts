@@ -2,9 +2,11 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { FileInfo } from '@/types/ipc/file';
 import { isWindows } from '@main/constants';
+import { Logger } from '@main/core/logger';
 
 export default class FileManager {
   private static instance: FileManager | null = null;
+  private logger = Logger.create('FileManager');
 
   private constructor() {}
 
@@ -42,7 +44,7 @@ export default class FileManager {
       );
       return fileInfos;
     } catch (error) {
-      console.error('Read directory error:', error);
+      this.logger.error('读取目录失败', error);
       const errorString =
         error instanceof Error ? error.message : 'Unknown error';
       throw new Error(`Failed to read directory: ${errorString}`);
@@ -54,7 +56,7 @@ export default class FileManager {
       const normalizedPath = this.normalizePath(dirPath);
       await fs.mkdir(normalizedPath, { recursive: true });
     } catch (error) {
-      console.error('Create directory error:', error);
+      this.logger.error('创建目录失败', error);
       const errorString =
         error instanceof Error ? error.message : 'Unknown error';
       throw new Error(`Failed to create directory: ${errorString}`);
@@ -69,7 +71,7 @@ export default class FileManager {
       const normalizedPath = this.normalizePath(filePath);
       await fs.writeFile(normalizedPath, content, 'utf-8');
     } catch (error) {
-      console.error('Create file error:', error);
+      this.logger.error('创建文件失败', error);
       const errorString =
         error instanceof Error ? error.message : 'Unknown error';
       throw new Error(`Failed to create file: ${errorString}`);
@@ -85,7 +87,7 @@ export default class FileManager {
       const content = await fs.readFile(normalizedPath, { encoding });
       return content;
     } catch (error) {
-      console.error('Read file error:', error);
+      this.logger.error('读取文件失败', error);
       const errorString =
         error instanceof Error ? error.message : 'Unknown error';
       throw new Error(`Failed to read file: ${errorString}`);
@@ -101,7 +103,7 @@ export default class FileManager {
       const normalizedDest = this.normalizePath(destinationPath);
       await this.copyPath(normalizedSource, normalizedDest);
     } catch (error) {
-      console.error('Copy error:', error);
+      this.logger.error('复制文件失败', error);
       const errorString =
         error instanceof Error ? error.message : 'Unknown error';
       throw new Error(`Failed to copy: ${errorString}`);
@@ -117,7 +119,7 @@ export default class FileManager {
       const normalizedDest = this.normalizePath(destinationPath);
       await fs.rename(normalizedSource, normalizedDest);
     } catch (error) {
-      console.error('Move error:', error);
+      this.logger.error('移动文件失败', error);
       const errorString =
         error instanceof Error ? error.message : 'Unknown error';
       throw new Error(`Failed to move: ${errorString}`);
@@ -135,7 +137,7 @@ export default class FileManager {
         await fs.unlink(normalizedPath);
       }
     } catch (error) {
-      console.error('Delete error:', error);
+      this.logger.error('删除文件失败', error);
       const errorString =
         error instanceof Error ? error.message : 'Unknown error';
       throw new Error(`Failed to delete: ${errorString}`);
@@ -155,7 +157,7 @@ export default class FileManager {
         createdTime: stats.birthtime,
       };
     } catch (error) {
-      console.error('Get info error:', error);
+      this.logger.error('获取文件信息失败', error);
       const errorString =
         error instanceof Error ? error.message : 'Unknown error';
       throw new Error(`Failed to get file info: ${errorString}`);

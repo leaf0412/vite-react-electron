@@ -1,5 +1,6 @@
 import { WebSocketServer, WebSocket } from 'ws';
 import { IncomingMessage } from 'http';
+import { Logger } from '@main/core/logger';
 
 interface WebSocketOptions {
   path?: string;
@@ -25,13 +26,15 @@ export default class WebSocketManager<T = unknown> {
   private messages: ParsedMessage<T>[] = [];
   private maxMessages: number = 100;
   private messageParser: (data: string | Buffer) => T = this.defaultParser;
+  private logger = Logger.create('WebSocketManager');
+  
   constructor() {}
 
   public async createAndBind(
     port: number,
     options?: WebSocketOptions
   ): Promise<boolean> {
-    console.log('createAndBind websocket', port, options);
+    this.logger.info(`创建并绑定 WebSocket 服务`, { port, options });
     if (this.servers.has(port)) return false;
 
     return new Promise(resolve => {
@@ -47,7 +50,7 @@ export default class WebSocketManager<T = unknown> {
         this.clients.set(port, new Map());
 
         server.on('error', err => {
-          console.error(`WebSocket error on port ${port}:`, err);
+          this.logger.error(`WebSocket 服务器错误 (port: ${port})`, err);
           resolve(false);
         });
 
@@ -84,7 +87,7 @@ export default class WebSocketManager<T = unknown> {
             });
 
             socket.on('error', err => {
-              console.error(`WebSocket client error: ${clientId}`, err);
+              this.logger.error(`WebSocket 客户端错误`, err, { clientId, port });
             });
           }
         );
@@ -92,14 +95,11 @@ export default class WebSocketManager<T = unknown> {
         server.on('listening', () => {
           this.servers.set(port, server);
           this.isRunning.set(port, true);
-          console.log(`WebSocket Server listening on port ${port}`);
+          this.logger.info(`WebSocket 服务器启动`, { port });
           resolve(true);
         });
       } catch (error) {
-        console.error(
-          `Failed to create WebSocket server on port ${port}:`,
-          error
-        );
+        this.logger.error(`创建 WebSocket 服务器失败`, error, { port });
         resolve(false);
       }
     });
@@ -131,7 +131,7 @@ export default class WebSocketManager<T = unknown> {
 
       server.close(() => {
         this.isRunning.set(port, false);
-        console.log(`WebSocket Server on port ${port} stopped`);
+        this.logger.info(`WebSocket 服务器停止`, { port });
         resolve(true);
       });
     });
@@ -151,10 +151,7 @@ export default class WebSocketManager<T = unknown> {
     return new Promise(resolve => {
       client.send(message, error => {
         if (error) {
-          console.error(
-            `Send error to client ${clientId} on port ${port}:`,
-            error
-          );
+          this.logger.error(`发送消息失败`, error, { clientId, port });
           resolve(false);
         } else {
           resolve(true);
@@ -178,10 +175,7 @@ export default class WebSocketManager<T = unknown> {
           new Promise(resolve => {
             client.send(message, error => {
               if (error) {
-                console.error(
-                  `Send error to client ${clientId} on port ${port}:`,
-                  error
-                );
+                this.logger.error(`广播消息失败`, error, { clientId, port });
                 resolve(false);
               } else {
                 resolve(true);

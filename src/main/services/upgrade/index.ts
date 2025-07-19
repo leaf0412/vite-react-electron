@@ -4,6 +4,7 @@ import {
   UpdateInfo as ElectronUpdateInfo,
 } from 'electron-updater';
 import { UpgradeEvents } from './event';
+import { Logger } from '@main/core/logger';
 
 export interface UpdateInfo {
   status: boolean;
@@ -42,6 +43,7 @@ export default class UpgradeManager {
   private options: UpdateOptions;
   private mainWindow: BrowserWindow | null = null;
   private updateResponse: UpdateInfo | null = null;
+  private logger = Logger.create('UpgradeManager');
 
   constructor(options: UpdateOptions) {
     this.options = options;
@@ -64,7 +66,7 @@ export default class UpgradeManager {
       autoUpdater.autoDownload = autoDownload ?? false;
       autoUpdater.autoInstallOnAppQuit = autoInstallOnAppQuit ?? false;
     } else {
-      console.error('====== update server url is required =======');
+      this.logger.error('更新服务器 URL 是必需的');
     }
 
     autoUpdater.on('update-available', (info: ElectronUpdateInfo) => {

@@ -2,18 +2,18 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import { ServiceContainer } from './service-container';
 import type { ServiceRegistry } from './types';
 import { IpcManager } from '@main/ipc/manager';
+import { Logger } from './logger';
 import { WindowManager } from '@main/core';
 import { 
   DialogManager, 
-  FileManager, 
   UpgradeManager, 
   UdpManager, 
   WebSocketManager 
 } from '@main/services';
+import { FileService, FileIpcHandler } from '@main/features/file';
 import {
   WindowIpcHandler,
   DialogIpcHandler,
-  FileIpcHandler,
   UpgradeIpcHandler,
   UdpIpcHandler,
   WebSocketIpcHandler,
@@ -25,10 +25,13 @@ import { unregisterProtocol } from '@main/core/protocol';
 export class AppManager {
   private serviceContainer = new ServiceContainer();
   private ipcManager = new IpcManager();
+  private logger = Logger.create('AppManager');
   private isInitialized = false;
   private mainWindow: BrowserWindow | undefined;
   private startupWindow: BrowserWindow | undefined;
   private loadingComplete = false;
+  private fileService = new FileService();
+  private fileIpcHandler = new FileIpcHandler(this.fileService);
 
   async initialize(): Promise<void> {
     if (this.isInitialized) {
@@ -36,17 +39,28 @@ export class AppManager {
     }
 
     try {
+      this.logger.info('等待应用程序就绪');
       await app.whenReady();
       
+      this.logger.info('注册服务');
       this.registerServices();
+      
+      this.logger.info('注册 IPC 处理器');
       this.registerIpcHandlers();
+      
+      this.logger.info('初始化 IPC');
       await this.initializeIpc();
+      
+      this.logger.info('设置应用程序 IPC 处理器');
       this.setupAppIpcHandlers();
+      
+      this.logger.info('创建窗口');
       await this.createWindows();
       
       this.isInitialized = true;
+      this.logger.info('AppManager 初始化完成');
     } catch (error) {
-      console.error('Failed to initialize app:', error);
+      this.logger.error('AppManager 初始化失败', error);
       throw error;
     }
   }
@@ -54,7 +68,7 @@ export class AppManager {
   private registerServices(): void {
     this.serviceContainer.register('windowManager', () => new WindowManager());
     this.serviceContainer.register('dialogManager', () => new DialogManager());
-    this.serviceContainer.register('fileManager', () => FileManager.getInstance());
+    this.serviceContainer.register('fileManager', () => this.fileService);
     this.serviceContainer.register('upgradeManager', () => new UpgradeManager({
       serverUrl: VITE_DEV_SERVER_URL,
       currentVersion: app.getVersion(),
@@ -70,14 +84,17 @@ export class AppManager {
     const udpManager = this.serviceContainer.get('udpManager');
     const websocketManager = this.serviceContainer.get('websocketManager');
 
+    // 注册旧的IPC处理器
     this.ipcManager.registerHandlers([
       new WindowIpcHandler(windowManager),
       new DialogIpcHandler(),
-      new FileIpcHandler(),
       new UpgradeIpcHandler(upgradeManager),
       new UdpIpcHandler(udpManager),
       new WebSocketIpcHandler(websocketManager),
     ]);
+    
+    // 注册新的FileService IPC处理器
+    this.fileIpcHandler.register();
   }
 
   private async initializeIpc(): Promise<void> {
@@ -165,21 +182,33 @@ export class AppManager {
 
   async destroy(): Promise<void> {
     try {
+      this.logger.info('开始销毁 AppManager');
+      
+      this.logger.debug('关闭窗口');
       this.mainWindow?.close();
       this.startupWindow?.close();
       this.loadingComplete = false;
       
+      this.logger.debug('移除 IPC 处理器');
       ipcMain.removeHandler(Events.GET_LANGUAGE);
       ipcMain.removeHandler(Events.MAIN_WINDOW_READY);
       
+      this.logger.debug('销毁 IPC 管理器');
+      // 先销毁新的FileService IPC处理器
+      this.fileIpcHandler.unregister();
+      // 再销毁旧的IPC处理器
       await this.ipcManager.destroyAll();
+      
+      this.logger.debug('销毁服务容器');
       await this.serviceContainer.dispose();
       
+      this.logger.debug('注销协议');
       unregisterProtocol();
       
       this.isInitialized = false;
+      this.logger.info('AppManager 销毁完成');
     } catch (error) {
-      console.error('Failed to destroy app:', error);
+      this.logger.error('AppManager 销毁失败', error);
       throw error;
     }
   }

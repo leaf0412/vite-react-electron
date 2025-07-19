@@ -1,4 +1,5 @@
 import { createSocket, Socket, RemoteInfo } from 'dgram';
+import { Logger } from '@main/core/logger';
 
 interface UdpOptions {
   broadcast?: boolean;
@@ -17,6 +18,7 @@ export default class UdpManager<T = unknown> {
   private messages: ParsedMessage<T>[] = [];
   private maxMessages: number = 100;
   private messageParser: (buf: Buffer) => T = this.defaultParser;
+  private logger = Logger.create('UdpManager');
 
   public async createAndBind(
     port: number,
@@ -28,7 +30,7 @@ export default class UdpManager<T = unknown> {
 
     return new Promise(resolve => {
       socket.on('error', err => {
-        console.error(`UDP error on port ${port}:`, err);
+        this.logger.error(`UDP 服务器错误 (port: ${port})`, err);
         resolve(false);
       });
 
@@ -47,15 +49,15 @@ export default class UdpManager<T = unknown> {
           try {
             socket.addMembership(options.multicastAddr);
           } catch (err) {
-            console.warn(
-              `Failed to join multicast group: ${options.multicastAddr}`
-            );
+            this.logger.warn(`加入组播组失败`, { 
+              multicastAddr: options.multicastAddr 
+            });
           }
         }
 
         this.sockets.set(port, socket);
         this.isRunning.set(port, true);
-        console.log(`UDP Server listening on port ${port}`);
+        this.logger.info(`UDP 服务器启动`, { port });
         resolve(true);
       });
     });
@@ -77,7 +79,7 @@ export default class UdpManager<T = unknown> {
     return new Promise(resolve => {
       socket.close(() => {
         this.isRunning.set(port, false);
-        console.log(`UDP Server on port ${port} stopped`);
+        this.logger.info(`UDP 服务器停止`, { port });
         resolve(true);
       });
     });
@@ -94,7 +96,7 @@ export default class UdpManager<T = unknown> {
     return new Promise((resolve, reject) => {
       socket.send(message, port, address, error => {
         if (error) {
-          console.error(`Send error on port ${port}:`, error);
+          this.logger.error(`UDP 发送消息失败 (port: ${port}, address: ${address})`, error);
           reject(false);
         } else {
           resolve(true);
