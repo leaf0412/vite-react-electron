@@ -5,15 +5,14 @@ import { IpcManager } from '@main/ipc/manager';
 import { Logger } from './logger';
 import { WindowManager } from '@main/core';
 import { 
-  DialogManager, 
   UpgradeManager, 
   UdpManager, 
   WebSocketManager 
 } from '@main/services';
 import { FileService, FileIpcHandler } from '@main/features/file';
+import { DialogService, DialogIpcHandler } from '@main/features/dialog';
 import {
   WindowIpcHandler,
-  DialogIpcHandler,
   UpgradeIpcHandler,
   UdpIpcHandler,
   WebSocketIpcHandler,
@@ -32,6 +31,8 @@ export class AppManager {
   private loadingComplete = false;
   private fileService = new FileService();
   private fileIpcHandler = new FileIpcHandler(this.fileService);
+  private dialogService = new DialogService();
+  private dialogIpcHandler = new DialogIpcHandler(this.dialogService);
 
   async initialize(): Promise<void> {
     if (this.isInitialized) {
@@ -67,7 +68,7 @@ export class AppManager {
 
   private registerServices(): void {
     this.serviceContainer.register('windowManager', () => new WindowManager());
-    this.serviceContainer.register('dialogManager', () => new DialogManager());
+    this.serviceContainer.register('dialogManager', () => this.dialogService);
     this.serviceContainer.register('fileManager', () => this.fileService);
     this.serviceContainer.register('upgradeManager', () => new UpgradeManager({
       serverUrl: VITE_DEV_SERVER_URL,
@@ -87,14 +88,14 @@ export class AppManager {
     // 注册旧的IPC处理器
     this.ipcManager.registerHandlers([
       new WindowIpcHandler(windowManager),
-      new DialogIpcHandler(),
       new UpgradeIpcHandler(upgradeManager),
       new UdpIpcHandler(udpManager),
       new WebSocketIpcHandler(websocketManager),
     ]);
     
-    // 注册新的FileService IPC处理器
+    // 注册新的功能模块 IPC 处理器
     this.fileIpcHandler.register();
+    this.dialogIpcHandler.register();
   }
 
   private async initializeIpc(): Promise<void> {
@@ -194,8 +195,9 @@ export class AppManager {
       ipcMain.removeHandler(Events.MAIN_WINDOW_READY);
       
       this.logger.debug('销毁 IPC 管理器');
-      // 先销毁新的FileService IPC处理器
+      // 先销毁新的功能模块 IPC 处理器
       this.fileIpcHandler.unregister();
+      this.dialogIpcHandler.unregister();
       // 再销毁旧的IPC处理器
       await this.ipcManager.destroyAll();
       
