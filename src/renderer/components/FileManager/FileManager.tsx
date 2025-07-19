@@ -82,6 +82,14 @@ const FileManager: React.FC<FileManagerProps> = ({
     setPathParts(parts);
   }, [currentPath]);
 
+  // 辅助函数：处理IPC响应格式
+  const handleIpcResponse = <T,>(result: { success: boolean; data?: T; error?: string }): T => {
+    if (!result.success) {
+      throw new Error(result.error || '操作失败');
+    }
+    return result.data!;
+  };
+
   const loadFiles = useCallback(
     async (path: string) => {
       try {
@@ -94,7 +102,7 @@ const FileManager: React.FC<FileManagerProps> = ({
         }
 
         const result = await readDirectory(path);
-        const files = result.map(file => ({
+        const files = handleIpcResponse(result).map(file => ({
           ...file,
           modifiedTime: file.modifiedTime.toLocaleString(),
         }));
@@ -191,7 +199,8 @@ const FileManager: React.FC<FileManagerProps> = ({
         } else {
           // 对于所有其他文件，尝试以文本方式打开
           try {
-            const content = await readFile(file.path);
+            const result = await readFile(file.path);
+            const content = handleIpcResponse(result);
             setPreviewType('text');
             setPreviewContent(content);
             setIsPreviewModalVisible(true);
@@ -217,7 +226,8 @@ const FileManager: React.FC<FileManagerProps> = ({
       });
 
       if (result.response === 0) {
-        await deleteFile(file.path);
+        const deleteResult = await deleteFile(file.path);
+        handleIpcResponse(deleteResult);
         message.success('删除成功');
         loadFiles(currentPath);
       }
@@ -235,7 +245,8 @@ const FileManager: React.FC<FileManagerProps> = ({
 
     try {
       const newPath = `${currentPath}/${newItemName}`;
-      const exists = await existsFile(newPath);
+      const existsResult = await existsFile(newPath);
+      const exists = handleIpcResponse(existsResult);
 
       if (exists) {
         message.error('该名称已存在');
@@ -243,9 +254,11 @@ const FileManager: React.FC<FileManagerProps> = ({
       }
 
       if (isDirectory) {
-        await createDirectory(newPath);
+        const createDirResult = await createDirectory(newPath);
+        handleIpcResponse(createDirResult);
       } else {
-        await createFile(newPath);
+        const createFileResult = await createFile(newPath);
+        handleIpcResponse(createFileResult);
       }
 
       message.success(`${isDirectory ? '文件夹' : '文件'}创建成功`);
@@ -263,14 +276,16 @@ const FileManager: React.FC<FileManagerProps> = ({
 
     try {
       const newPath = `${currentPath}/${newItemName}`;
-      const exists = await existsFile(newPath);
+      const existsResult = await existsFile(newPath);
+      const exists = handleIpcResponse(existsResult);
 
       if (exists) {
         message.error('该名称已存在');
         return;
       }
 
-      await moveFile(selectedFile.path, newPath);
+      const moveResult = await moveFile(selectedFile.path, newPath);
+      handleIpcResponse(moveResult);
       message.success('重命名成功');
       setIsRenameModalVisible(false);
       setNewItemName('');
@@ -297,7 +312,8 @@ const FileManager: React.FC<FileManagerProps> = ({
 
     try {
       let newPath = `${currentPath}/${clipboard.file.name}`;
-      const exists = await existsFile(newPath);
+      const existsResult = await existsFile(newPath);
+      const exists = handleIpcResponse(existsResult);
 
       if (exists) {
         const result = await showQuestionDialog({
@@ -321,19 +337,24 @@ const FileManager: React.FC<FileManagerProps> = ({
 
           let counter = 1;
           let newFileName;
+          let exists = true;
           do {
             newFileName = `${baseName} (${counter})${extension}`;
             counter++;
-          } while (await existsFile(`${currentPath}/${newFileName}`));
+            const checkResult = await existsFile(`${currentPath}/${newFileName}`);
+            exists = handleIpcResponse(checkResult);
+          } while (exists);
 
           newPath = `${currentPath}/${newFileName}`;
         }
       }
 
       if (clipboard.action === 'copy') {
-        await copyFile(clipboard.file.path, newPath);
+        const copyResult = await copyFile(clipboard.file.path, newPath);
+        handleIpcResponse(copyResult);
       } else {
-        await moveFile(clipboard.file.path, newPath);
+        const moveResult = await moveFile(clipboard.file.path, newPath);
+        handleIpcResponse(moveResult);
       }
 
       message.success(`${clipboard.action === 'copy' ? '复制' : '移动'}成功`);
