@@ -19,11 +19,13 @@ export const Events = {
   FILE_EXISTS: 'file:exists',
 
   // 对话框事件
-  DIALOG_OPEN_FILE: 'dialog:open-file',
-  DIALOG_OPEN_DIRECTORY: 'dialog:open-directory',
-  DIALOG_SAVE_FILE: 'dialog:save-file',
-  DIALOG_MESSAGE_BOX: 'dialog:message-box',
-  DIALOG_ERROR_BOX: 'dialog:error-box',
+  DIALOG_OPEN: 'dialog:open',
+  DIALOG_SAVE: 'dialog:save',
+  DIALOG_MESSAGE: 'dialog:message',
+  DIALOG_ERROR: 'dialog:error',
+  DIALOG_INFO: 'dialog:info',
+  DIALOG_WARNING: 'dialog:warning',
+  DIALOG_QUESTION: 'dialog:question',
 
   // 网络事件 - WebSocket
   WEBSOCKET_CREATE: 'websocket:create',
