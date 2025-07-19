@@ -1,11 +1,10 @@
 // core
 import { WindowEvents } from '@main/core/window/event';
 // services
-import { DialogEvents } from '@main/services/dialog/event';
 import { UpgradeEvents } from '@main/services/upgrade/event';
 import { UdpEvents } from '@main/services/udp/event';
 import { WebSocketEvents } from '@main/services/websocket/event';
-// shared (只导入文件相关事件)
+// shared (导入文件和对话框相关事件)
 import { Events as SharedEvents } from '@main/shared/constants';
 
 export const CommandEvents = {
@@ -14,7 +13,7 @@ export const CommandEvents = {
   GET_LANGUAGE: 'GET_LANGUAGE',
 } as const;
 
-// 只提取文件相关的事件
+// 提取文件和对话框相关的事件
 const FileEvents = {
   FILE_READ_DIRECTORY: SharedEvents.FILE_READ_DIRECTORY,
   FILE_CREATE_DIRECTORY: SharedEvents.FILE_CREATE_DIRECTORY,
@@ -25,6 +24,16 @@ const FileEvents = {
   FILE_DELETE_FILE: SharedEvents.FILE_DELETE_FILE,
   FILE_GET_INFO: SharedEvents.FILE_GET_INFO,
   FILE_EXISTS: SharedEvents.FILE_EXISTS,
+} as const;
+
+const DialogEvents = {
+  DIALOG_OPEN: SharedEvents.DIALOG_OPEN,
+  DIALOG_SAVE: SharedEvents.DIALOG_SAVE,
+  DIALOG_MESSAGE: SharedEvents.DIALOG_MESSAGE,
+  DIALOG_ERROR: SharedEvents.DIALOG_ERROR,
+  DIALOG_INFO: SharedEvents.DIALOG_INFO,
+  DIALOG_WARNING: SharedEvents.DIALOG_WARNING,
+  DIALOG_QUESTION: SharedEvents.DIALOG_QUESTION,
 } as const;
 
 export const Events = {
