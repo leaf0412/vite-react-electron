@@ -30,15 +30,25 @@ export const Events = {
   // 网络事件 - WebSocket
   WEBSOCKET_CREATE: 'websocket:create',
   WEBSOCKET_DESTROY: 'websocket:destroy',
+  WEBSOCKET_STOP: 'websocket:stop',
   WEBSOCKET_SEND: 'websocket:send',
   WEBSOCKET_SEND_TO_ALL: 'websocket:send-to-all',
   WEBSOCKET_GET_MESSAGES: 'websocket:get-messages',
+  WEBSOCKET_CLEAR_MESSAGES: 'websocket:clear-messages',
+  WEBSOCKET_IS_PORT_RUNNING: 'websocket:is-port-running',
+  WEBSOCKET_GET_RUNNING_PORTS: 'websocket:get-running-ports',
+  WEBSOCKET_SET_MAX_MESSAGES: 'websocket:set-max-messages',
 
   // 网络事件 - UDP
   UDP_CREATE: 'udp:create',
   UDP_DESTROY: 'udp:destroy',
+  UDP_STOP: 'udp:stop',
   UDP_SEND: 'udp:send',
   UDP_GET_MESSAGES: 'udp:get-messages',
+  UDP_CLEAR_MESSAGES: 'udp:clear-messages',
+  UDP_IS_PORT_RUNNING: 'udp:is-port-running',
+  UDP_GET_RUNNING_PORTS: 'udp:get-running-ports',
+  UDP_SET_MAX_MESSAGES: 'udp:set-max-messages',
 
   // 更新事件
   UPDATE_CHECK: 'update:check',
