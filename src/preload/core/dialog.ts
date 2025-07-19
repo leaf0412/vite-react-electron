@@ -1,5 +1,5 @@
 import { ipcRenderer, OpenDialogOptions, SaveDialogOptions } from 'electron';
-import { Events } from '@main/ipc/ipc-events';
+import { Events } from '@main/shared/constants';
 import { DialogOptions } from '@/types/ipc/dialog';
 
 export const dialogApi = {
