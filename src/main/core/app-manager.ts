@@ -92,11 +92,10 @@ export class AppManager {
   }
 
   private initializeSystemService(): void {
-    this.systemService.initializeUpdater({
-      serverUrl: undefined, // 根据需要配置
-      currentVersion: app.getVersion(),
-      autoInstallOnAppQuit: true,
-    }, this.mainWindow);
+    // 设置主窗口以便手动更新系统可以发送进度通知
+    if (this.mainWindow) {
+      this.systemService.setMainWindow(this.mainWindow);
+    }
   }
 
   private async initializeIpc(): Promise<void> {
@@ -206,8 +205,7 @@ export class AppManager {
       this.logger.debug('销毁网络服务');
       await this.networkService.destroy();
       
-      this.logger.debug('销毁系统服务');
-      this.systemService.destroy();
+      this.logger.debug('系统服务无需销毁');
       
       this.logger.debug('销毁服务容器');
       await this.serviceContainer.dispose();
