@@ -21,53 +21,6 @@ export interface SystemOperations {
   getHomedir: () => Promise<{ success: boolean; data?: string; error?: string }>;
   getVersion: () => Promise<{ success: boolean; data?: string; error?: string }>;
 
-  // 更新功能
-  initUpdater: (options: {
-    serverUrl?: string;
-    currentVersion: string;
-    forceDevUpdateConfig?: boolean;
-    autoDownload?: boolean;
-    autoInstallOnAppQuit?: boolean;
-  }) => Promise<{ success: boolean; data?: boolean; error?: string }>;
-  
-  checkForUpdates: () => Promise<{ 
-    success: boolean; 
-    data?: {
-      status: boolean;
-      needUpdate: boolean;
-      version: string;
-    } | {
-      status: boolean;
-      message: string;
-      details?: unknown;
-    }; 
-    error?: string 
-  }>;
-  
-  downloadUpdate: () => Promise<{ 
-    success: boolean; 
-    data?: {
-      status: boolean;
-      needUpdate: boolean;
-      version: string;
-    } | {
-      status: boolean;
-      message: string;
-      details?: unknown;
-    }; 
-    error?: string 
-  }>;
-  
-  installUpdate: () => Promise<{ 
-    success: boolean; 
-    data?: void | {
-      status: boolean;
-      message: string;
-      details?: unknown;
-    }; 
-    error?: string 
-  }>;
-  
   // 监听更新进度
   onUpdateProgress: (callback: (data: {
     type: 'check' | 'download' | 'downloaded';
@@ -90,4 +43,33 @@ export interface SystemOperations {
 
   // 移除更新错误监听
   removeUpdateErrorListener: () => void;
+
+  // 更新接口
+  checkForUpdates: (options?: { serverUrl?: string; autoDownload?: boolean }) => Promise<{ 
+    success: boolean; 
+    data?: {
+      hasUpdate: boolean;
+      version?: string;
+      downloadUrl?: string;
+      fileName?: string;
+      fileSize?: number;
+      md5?: string;
+      publishedAt?: string;
+      updateMethod: 'manual';
+    }; 
+    error?: string 
+  }>;
+
+  downloadAndInstall: () => Promise<{ 
+    success: boolean; 
+    data?: { 
+      filePath?: string;
+      updateMethod: 'manual';
+    }; 
+    error?: string 
+  }>;
+
+  quitAndInstall: () => Promise<{ success: boolean; error?: string }>;
+  
+  getDownloadsPath: () => Promise<{ success: boolean; data?: string; error?: string }>;
 } 

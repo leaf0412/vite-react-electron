@@ -8,19 +8,6 @@ export const systemApi = {
   getHomedir: () => ipcRenderer.invoke(Events.SYSTEM_GET_HOMEDIR),
   getVersion: () => ipcRenderer.invoke(Events.SYSTEM_GET_VERSION),
 
-  // 更新功能
-  initUpdater: (options: {
-    serverUrl?: string;
-    currentVersion: string;
-    forceDevUpdateConfig?: boolean;
-    autoDownload?: boolean;
-    autoInstallOnAppQuit?: boolean;
-  }) => ipcRenderer.invoke(Events.SYSTEM_INIT_UPDATER, options),
-  
-  checkForUpdates: () => ipcRenderer.invoke(Events.UPDATE_CHECK),
-  downloadUpdate: () => ipcRenderer.invoke(Events.UPDATE_DOWNLOAD),
-  installUpdate: () => ipcRenderer.invoke(Events.UPDATE_INSTALL),
-
   // 监听更新进度
   onUpdateProgress: (callback: (data: {
     type: 'check' | 'download' | 'downloaded';
@@ -39,7 +26,7 @@ export const systemApi = {
     details?: unknown;
     timestamp: string;
   }) => void) => {
-    ipcRenderer.on('UPDATE_ERROR', (_, data) => callback(data));
+    ipcRenderer.on('UPGRADE_ERROR', (_, data) => callback(data));
   },
 
   // 移除更新进度监听
@@ -49,6 +36,14 @@ export const systemApi = {
 
   // 移除更新错误监听
   removeUpdateErrorListener: () => {
-    ipcRenderer.removeAllListeners('UPDATE_ERROR');
+    ipcRenderer.removeAllListeners('UPGRADE_ERROR');
   },
+
+  // 更新接口
+  checkForUpdates: (options?: { serverUrl?: string; autoDownload?: boolean }) => 
+    ipcRenderer.invoke(Events.UPDATE_CHECK, options),
+  downloadAndInstall: () => 
+    ipcRenderer.invoke(Events.UPDATE_DOWNLOAD),
+  quitAndInstall: () => ipcRenderer.invoke(Events.UPDATE_QUIT_AND_INSTALL),
+  getDownloadsPath: () => ipcRenderer.invoke(Events.UPDATE_GET_DOWNLOADS_PATH),
 }; 

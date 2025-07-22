@@ -5,19 +5,6 @@ export const systemBridge = {
   getHomedir: () => window.ipcRenderer.getHomedir(),
   getVersion: () => window.ipcRenderer.getVersion(),
 
-  // 更新功能
-  initUpdater: (options: {
-    serverUrl?: string;
-    currentVersion: string;
-    forceDevUpdateConfig?: boolean;
-    autoDownload?: boolean;
-    autoInstallOnAppQuit?: boolean;
-  }) => window.ipcRenderer.initUpdater(options),
-  
-  checkForUpdates: () => window.ipcRenderer.checkForUpdates(),
-  downloadUpdate: () => window.ipcRenderer.downloadUpdate(),
-  installUpdate: () => window.ipcRenderer.installUpdate(),
-
   // 监听更新进度
   onUpdateProgress: (callback: (data: {
     type: 'check' | 'download' | 'downloaded';
@@ -40,6 +27,14 @@ export const systemBridge = {
 
   // 移除更新错误监听
   removeUpdateErrorListener: () => window.ipcRenderer.removeUpdateErrorListener(),
+
+  // 更新接口
+  checkForUpdates: (options?: { serverUrl?: string; autoDownload?: boolean }) => 
+    window.ipcRenderer.checkForUpdates(options),
+  downloadAndInstall: () => 
+    window.ipcRenderer.downloadAndInstall(),
+  quitAndInstall: () => window.ipcRenderer.quitAndInstall(),
+  getDownloadsPath: () => window.ipcRenderer.getDownloadsPath(),
 
   // 基本系统信息
   get platform() {
