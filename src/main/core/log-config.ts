@@ -2,6 +2,7 @@ import log from 'electron-log';
 import { app } from 'electron';
 import path from 'path';
 import fs from 'fs';
+import { isDevelopment } from '@main/constants';
 
 export interface LogConfig {
   level: 'debug' | 'info' | 'warn' | 'error';
@@ -17,7 +18,7 @@ export class LogConfiguration {
 
   private constructor() {
     this.config = {
-      level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
+      level: isDevelopment ? 'debug' : 'info',
       maxSize: 50 * 1024 * 1024,
       maxFiles: 10,
       enableConsole: true,
@@ -34,11 +35,10 @@ export class LogConfiguration {
   }
 
   private setupElectronLog(): void {
-    const isDev = process.env.NODE_ENV === 'development';
 
     if (this.config.enableConsole) {
       log.transports.console.level = this.config.level;
-      log.transports.console.format = isDev 
+      log.transports.console.format = isDevelopment 
         ? '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}'
         : '[{y}-{m}-{d} {h}:{i}:{s}] [{level}] {text}';
     } else {
@@ -51,7 +51,7 @@ export class LogConfiguration {
 
       const userDataPath = app.getPath('userData');
       log.transports.file.resolvePathFn = (variables) => {
-        if (isDev) {
+        if (isDevelopment) {
           // 开发环境，日志文件放在项目根目录
           return path.join(process.cwd(), 'logs', variables.fileName || 'main.log');
         }
