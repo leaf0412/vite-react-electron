@@ -10,12 +10,9 @@
     target: [
       {
         target: 'dmg'
-      },
-      {
-        target: 'zip'
       }
     ],
-    artifactName: '${productName}-Mac-${version}-Installer.${ext}',
+    artifactName: '${productName}-Mac-${version}.${ext}',
     gatekeeperAssess: false,
     identity: null
   },
@@ -26,7 +23,7 @@
         arch: ['ia32'],
       },
     ],
-    artifactName: '${productName}-Windows-${version}-Setup.${ext}',
+    artifactName: '${productName}-Windows-${version}.${ext}'
   },
   nsis: {
     oneClick: false,
@@ -43,6 +40,6 @@
   publish: {
     provider: 'generic',
     url: '',
-    channel: 'latest',
+    channel: 'latest-test',
   },
 }

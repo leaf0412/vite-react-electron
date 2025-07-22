@@ -2,7 +2,7 @@
   "name": "vite-react-electron",
   "private": true,
   "type": "module",
-  "version": "0.0.6",
+  "version": "0.0.3",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -28,8 +28,9 @@
     ]
   },
   "dependencies": {
+    "axios": "^1.10.0",
     "electron-log": "^5.4.1",
-    "electron-updater": "^6.6.2"
+    "yaml": "^2.8.0"
   },
   "devDependencies": {
     "@ant-design/icons": "^5.5.1",
