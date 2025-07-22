@@ -55,13 +55,12 @@ export const Events = {
   SYSTEM_GET_PLATFORM: 'system:get-platform',
   SYSTEM_GET_HOMEDIR: 'system:get-homedir',
   SYSTEM_GET_VERSION: 'system:get-version',
-  SYSTEM_INIT_UPDATER: 'system:init-updater',
 
   // 更新事件
   UPDATE_CHECK: 'update:check',
   UPDATE_DOWNLOAD: 'update:download',
-  UPDATE_INSTALL: 'update:install',
-  UPDATE_ERROR: 'update:error',
+  UPDATE_QUIT_AND_INSTALL: 'update:quit-and-install',
+  UPDATE_GET_DOWNLOADS_PATH: 'update:get-downloads-path',
 } as const;
 
 export const AppConstants = {

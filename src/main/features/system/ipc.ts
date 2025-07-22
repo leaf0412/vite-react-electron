@@ -1,7 +1,7 @@
 import { ipcMain, BrowserWindow } from 'electron';
 import { Logger } from '../../core/logger';
 import { Events } from '../../shared/constants';
-import { SystemService, UpdateOptions } from './service';
+import { SystemService } from './service';
 
 interface IpcHandler {
   register(): void;
@@ -32,24 +32,24 @@ export class SystemIpcHandler implements IpcHandler {
     });
 
     // 更新相关
-    ipcMain.handle(Events.UPDATE_CHECK, async () => {
-      return this.handleAsync(() => this.systemService.checkForUpdates());
+    ipcMain.handle(Events.UPDATE_CHECK, async (event, options?: { serverUrl?: string; autoDownload?: boolean }) => {
+      const mainWindow = BrowserWindow.fromWebContents(event.sender);
+      if (mainWindow) {
+        this.systemService.setMainWindow(mainWindow);
+      }
+      return this.systemService.checkForUpdates(options);
     });
 
     ipcMain.handle(Events.UPDATE_DOWNLOAD, async () => {
-      return this.handleAsync(() => this.systemService.downloadUpdate());
+      return this.systemService.downloadAndInstall();
     });
 
-    ipcMain.handle(Events.UPDATE_INSTALL, async () => {
-      return this.handleAsync(() => this.systemService.installUpdate());
+    ipcMain.handle(Events.UPDATE_QUIT_AND_INSTALL, async () => {
+      return this.systemService.quitAndInstall();
     });
 
-    ipcMain.handle(Events.SYSTEM_INIT_UPDATER, async (event, options: UpdateOptions) => {
-      return this.handleAsync(() => {
-        const mainWindow = BrowserWindow.fromWebContents(event.sender);
-        this.systemService.initializeUpdater(options, mainWindow || undefined);
-        return Promise.resolve(true);
-      });
+    ipcMain.handle(Events.UPDATE_GET_DOWNLOADS_PATH, async () => {
+      return this.handleAsync(() => this.systemService.getDownloadsPath());
     });
 
     this.logger.info('System IPC handlers registered');
@@ -62,8 +62,8 @@ export class SystemIpcHandler implements IpcHandler {
     ipcMain.removeHandler(Events.SYSTEM_GET_VERSION);
     ipcMain.removeHandler(Events.UPDATE_CHECK);
     ipcMain.removeHandler(Events.UPDATE_DOWNLOAD);
-    ipcMain.removeHandler(Events.UPDATE_INSTALL);
-    ipcMain.removeHandler(Events.SYSTEM_INIT_UPDATER);
+    ipcMain.removeHandler(Events.UPDATE_QUIT_AND_INSTALL);
+    ipcMain.removeHandler(Events.UPDATE_GET_DOWNLOADS_PATH);
     
     this.logger.info('System IPC handlers unregistered');
   }
